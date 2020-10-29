@@ -19,6 +19,7 @@
             class="list-complete-item"
             :active="selectedIndex == index"
             active-class="bg-blue-1"
+             @click="addToSearch('ingredient', ingredient.id)"
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -80,6 +81,7 @@
             v-for="recipe in recipes"
             :key="recipe.seoTitle"
             class="list-complete-item"
+             @click="addToSearch('recipe', recipe.id)"
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -120,7 +122,7 @@
             <div v-if="tags.length > 0">
               <q-chip
                 clickable
-                @click.stop="chooseTag(tag.id)"
+                @click="addToSearch('tag', tag.id)"
                 color="primary"
                 text-color="white"
                 v-for="tag in tags"
@@ -147,7 +149,6 @@
 
 <script>
 import CancelToken from "axios/lib/cancel/CancelToken";
-// import { cloneDeep } from "lodash"
 
 export default {
   name: "SearchResultList",
@@ -193,10 +194,10 @@ export default {
 
       return result;
     },
-    chooseTag(id) {
-      console.log(id);
-      this.$emit("onClearSearch");
+    addToSearch(type, id){
+      this.$emit("onAddToSearch", type, id);
     },
+
     selectNext() {
       this.selectedIndex++;
       console.log(this.selectedIndex);

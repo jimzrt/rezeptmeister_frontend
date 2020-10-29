@@ -20,9 +20,6 @@
           v-if="$q.screen.gt.sm"
         >
           <img src="http://localhost:8080/images/logo.png" height="50px" />
-          <!-- <q-toolbar-title shrink class="text-weight-bold">
-            YouTube
-          </q-toolbar-title> -->
           <q-toolbar-title shrink class="text-weight-bold">
             RezeptMeister
           </q-toolbar-title>
@@ -43,7 +40,7 @@
             bottom-slots
             debounce="200"
             bg-color="grey-5"
-            v-bind:class="{ active: searchFocus }"
+            v-bind:class="{ active: searchFocus || !searchFilterEmpty }"
             @keyup.down="selectNextSuggestion"
             @keyup.up="selectPrevSuggestion"
           >
@@ -65,6 +62,7 @@
                 <SearchResultList
                   ref="searchResult"
                   :search="searchInput"
+                  @onAddToSearch="addToSearch"
                   @onClearSearch="
                     searchInput = '';
                     searchFocus = false;
@@ -172,18 +170,11 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-sticky expand position="top">
+    <!-- active filters -->
+    <q-page-sticky expand position="top" v-if="!searchFilterEmpty">
       <q-toolbar class="YL__sticky bg-white q-px-xl">
-        Zutaten:
+        Zutaten: {{ this.searchFilter }}
         <q-space />
-        <q-btn icon="help" dense flat size="12px" class="YL__sticky-help" />
-        <q-btn
-          icon="settings"
-          dense
-          flat
-          class="YL__sticky-settings q-ml-md"
-          size="12px"
-        />
       </q-toolbar>
     </q-page-sticky>
 
@@ -195,6 +186,7 @@
 
 <script>
 import SearchResultList from "../components/SearchResultList.vue";
+import { isEmpty } from "lodash";
 
 const stringOptions = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
@@ -203,7 +195,6 @@ export default {
   components: {
     SearchResultList,
   },
-  methods: {},
   data() {
     return {
       model: null,
@@ -259,7 +250,25 @@ export default {
   beforeDestroy() {
     document.removeEventListener("click", this.onClickAnywhere);
   },
+  computed: {
+    searchFilterEmpty() {
+      return _.isEmpty(this.searchFilter);
+    },
+  },
   methods: {
+    addToSearch(type, value) {
+      console.log("add", type, value);
+      this.searchInput = "";
+      if (!(type in this.searchFilter)) {
+        // make it a set
+        this.$set(this.searchFilter, type, new Set());
+      }
+      this.searchFilter[type].add(value);
+
+      console.log(this.searchFilter);
+      console.log(this.searchFilterEmpty);
+      console.log(_.isEmpty(this.searchFilter));
+    },
     selectNextSuggestion: function () {
       this.$refs.searchResult.selectNext();
     },
