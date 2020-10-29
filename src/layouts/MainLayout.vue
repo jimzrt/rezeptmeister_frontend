@@ -269,6 +269,7 @@ export default {
       console.log(this.searchFilterEmpty);
       console.log(_.isEmpty(this.searchFilter));
     },
+    // todo: loosely couple trigger via prop instead of using refs
     selectNextSuggestion: function () {
       this.$refs.searchResult.selectNext();
     },

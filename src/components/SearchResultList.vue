@@ -361,6 +361,8 @@ export default {
 .resultHeading
   font-size: calc(12px + (18 - 12) * ((100vw - 300px) / (1600 - 300)))
   margin: 0px
+  overflow: hidden;
+  text-overflow: ellipsis;
 .heading
   font-weight: bold
   letter-spacing: 3px
