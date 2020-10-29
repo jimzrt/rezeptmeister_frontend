@@ -19,7 +19,7 @@
             class="list-complete-item"
             :active="selectedIndex == index"
             active-class="bg-blue-1"
-             @click="addToSearch('ingredient', ingredient.id)"
+             @click="addToSearch('ingredient', {id: ingredient.id, name: ingredient.name})"
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -81,7 +81,7 @@
             v-for="recipe in recipes"
             :key="recipe.seoTitle"
             class="list-complete-item"
-             @click="addToSearch('recipe', recipe.id)"
+             @click="addToSearch('recipe', {id: recipe.id, name: recipe.title})"
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -122,7 +122,7 @@
             <div v-if="tags.length > 0">
               <q-chip
                 clickable
-                @click="addToSearch('tag', tag.id)"
+                @click="addToSearch('tag', {id: tag.id, name: tag.name})"
                 color="primary"
                 text-color="white"
                 v-for="tag in tags"
@@ -194,8 +194,8 @@ export default {
 
       return result;
     },
-    addToSearch(type, id){
-      this.$emit("onAddToSearch", type, id);
+    addToSearch(type, value){
+      this.$emit("onAddToSearch", type, value);
     },
 
     selectNext() {

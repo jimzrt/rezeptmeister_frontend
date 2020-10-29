@@ -171,22 +171,21 @@
     </q-drawer>
 
     <!-- active filters -->
-    <q-page-sticky expand position="top" v-if="!searchFilterEmpty">
-      <q-toolbar class="YL__sticky bg-white q-px-xl">
-        Zutaten: {{ this.searchFilter }}
-        <q-space />
-      </q-toolbar>
-    </q-page-sticky>
+   
 
     <q-page-container>
+      
       <router-view />
     </q-page-container>
+     <SearchFilterBar v-model="searchFilter" v-if="!searchFilterEmpty" />
   </q-layout>
 </template>
 
 <script>
 import SearchResultList from "../components/SearchResultList.vue";
-import { isEmpty } from "lodash";
+import SearchFilterBar from "../components/SearchFilterBar.vue";
+
+import { isEmpty, some } from "lodash";
 
 const stringOptions = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
@@ -194,6 +193,7 @@ export default {
   name: "MyLayout",
   components: {
     SearchResultList,
+    SearchFilterBar,
   },
   data() {
     return {
@@ -252,22 +252,34 @@ export default {
   },
   computed: {
     searchFilterEmpty() {
-      return _.isEmpty(this.searchFilter);
+      for(const key of Object.keys(this.searchFilter)){
+        console.log("HALLO", key);
+         if(this.searchFilter[key].length > 0){
+           return false;
+         }
+      }
+      return true;
     },
   },
   methods: {
     addToSearch(type, value) {
       console.log("add", type, value);
       this.searchInput = "";
+
       if (!(type in this.searchFilter)) {
         // make it a set
-        this.$set(this.searchFilter, type, new Set());
+        // this.searchFilter[type] = [];
+        this.$set(this.searchFilter, type, []);
+      } else {
+        if (_.some(this.searchFilter[type], value)) {
+          console("inside")
+          return;
+        }
       }
-      this.searchFilter[type].add(value);
 
-      console.log(this.searchFilter);
-      console.log(this.searchFilterEmpty);
-      console.log(_.isEmpty(this.searchFilter));
+      this.searchFilter[type].push(value);
+      //this.$set(this.searchFilter, type, this.searchFilter[type]);
+      //console.log(this.searchFilter);
     },
     // todo: loosely couple trigger via prop instead of using refs
     selectNextSuggestion: function () {
@@ -356,15 +368,4 @@ export default {
     font-size: .75rem
     &:hover
       color: #000
-  &__sticky
-    min-height: 49px
-    border-bottom: 1px solid rgba(0,0,0,0.12)
-  &__sticky-help
-    border: 1px solid #ccc
-    padding-left: 8px
-    padding-right: 8px
-  &__sticky-settings
-    padding-left: 17px
-    padding-right: 17px
-    border: 1px solid #ccc
 </style>
