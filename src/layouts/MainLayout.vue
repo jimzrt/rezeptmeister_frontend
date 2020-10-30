@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hHh lpR fFf" class="bg-grey-1">
     <q-ajax-bar position="bottom" color="primary" size="10px" />
-    <q-header class="text-grey-1 q-py-xs edekaBar" height-hint="58">
+    <q-header class="text-grey-1 q-py-xs edekaBar" height-hint="65">
       <q-toolbar>
         <q-btn
           flat
@@ -20,7 +20,7 @@
           v-if="$q.screen.gt.sm"
         >
           <img src="http://localhost:8080/images/logo.png" height="50px" />
-          <q-toolbar-title shrink class="text-weight-bold">
+          <q-toolbar-title shrink class="text-weight-bold my-font">
             RezeptMeister
           </q-toolbar-title>
         </q-btn>
@@ -173,9 +173,9 @@
     <!-- active filters -->
    
 
-    <q-page-container>
-      
-      <router-view />
+    <q-page-container >
+      <RecipeResultGrid v-model="searchFilter" v-bind:style="{ 'margin-top': searchFilterEmpty ? '15px' : '80px'}" />
+      <!-- <router-view /> -->
     </q-page-container>
      <SearchFilterBar v-model="searchFilter" v-if="!searchFilterEmpty" />
   </q-layout>
@@ -184,14 +184,16 @@
 <script>
 import SearchResultList from "../components/SearchResultList.vue";
 import SearchFilterBar from "../components/SearchFilterBar.vue";
+import RecipeResultGrid from "../components/RecipeResultGrid.vue";
 
-import { isEmpty, some } from "lodash";
+import { some } from "lodash";
 
 const stringOptions = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
 export default {
   name: "MyLayout",
   components: {
+    RecipeResultGrid,
     SearchResultList,
     SearchFilterBar,
   },
@@ -253,7 +255,6 @@ export default {
   computed: {
     searchFilterEmpty() {
       for(const key of Object.keys(this.searchFilter)){
-        console.log("HALLO", key);
          if(this.searchFilter[key].length > 0){
            return false;
          }
@@ -265,6 +266,11 @@ export default {
     addToSearch(type, value) {
       console.log("add", type, value);
       this.searchInput = "";
+
+      if(type == "recipe"){
+        //todo
+        return;
+      }
 
       if (!(type in this.searchFilter)) {
         // make it a set

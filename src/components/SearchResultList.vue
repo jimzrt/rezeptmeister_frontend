@@ -19,7 +19,12 @@
             class="list-complete-item"
             :active="selectedIndex == index"
             active-class="bg-blue-1"
-             @click="addToSearch('ingredient', {id: ingredient.id, name: ingredient.name})"
+            @click="
+              addToSearch('ingredient', {
+                id: ingredient.id,
+                name: ingredient.name,
+              })
+            "
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -81,7 +86,9 @@
             v-for="recipe in recipes"
             :key="recipe.seoTitle"
             class="list-complete-item"
-             @click="addToSearch('recipe', {id: recipe.id, name: recipe.title})"
+            @click="
+              addToSearch('recipe', { id: recipe.id, name: recipe.title })
+            "
           >
             <q-item-section avatar>
               <q-avatar circle size="60px">
@@ -122,7 +129,7 @@
             <div v-if="tags.length > 0">
               <q-chip
                 clickable
-                @click="addToSearch('tag', {id: tag.id, name: tag.name})"
+                @click="addToSearch('tag', { id: tag.id, name: tag.name })"
                 color="primary"
                 text-color="white"
                 v-for="tag in tags"
@@ -181,20 +188,21 @@ export default {
       const index = textSmall.indexOf(searchInput);
 
       let result = "";
-      for (let idx = 0; idx < text.length; idx++) {
-        if (idx >= index && idx < index + searchInput.length) {
-          result +=
-            "<span class='text-weight-bolder' style='text-decoration: underline'>" +
-            text[idx] +
-            "</span>";
-        } else {
-          result += text[idx];
-        }
-      }
+      result += text.substring(0,index);
+      result += "<span class='text-weight-bolder' style='text-decoration: underline'>" + text.substring(index, index+searchInput.length) + "</span>";
+      result += text.substring(index+searchInput.length, text.length);
+
+      // for (let idx = 0; idx < text.length; idx++) {
+      //   if (idx >= index && idx < index + searchInput.length) {
+      //     result += "<span class='text-weight-bolder' style='text-decoration: underline'>" + text[idx] + "</span>";
+      //   } else {
+      //     result += text[idx];
+      //   }
+      // }
 
       return result;
     },
-    addToSearch(type, value){
+    addToSearch(type, value) {
       this.$emit("onAddToSearch", type, value);
     },
 
@@ -230,6 +238,7 @@ export default {
       this.loading = true;
       console.log("starting");
 
+      console.log(this.$axios.defaults.baseURL);
       let ingredientRequestIdx = this.promises.length;
       this.promises[ingredientRequestIdx] = this.$axios
         .get("http://localhost:8080/ingredient", {
@@ -361,17 +370,15 @@ export default {
 .resultHeading
   font-size: calc(12px + (18 - 12) * ((100vw - 300px) / (1600 - 300)))
   margin: 0px
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: hidden
+  text-overflow: ellipsis
 .heading
   font-weight: bold
   letter-spacing: 3px
-
 .q-item__section--avatar
   left: -45px
   position: relative
   padding-right: 0px
-
 .searchResult
   background-color: rgba(255, 255, 255, 1)
 </style>
