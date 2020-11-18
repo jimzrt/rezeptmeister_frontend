@@ -18,10 +18,10 @@
         v-if="currentRecipes.content && currentRecipes.content.length > 0"
       >
         <Flipped
-          :flip-id="recipe.seoTitle + '_1'"
+          :flip-id="index + '_1'"
           scale
           translate
-          v-for="recipe in currentRecipes.content"
+          v-for="(recipe, index) in currentRecipes.content"
           :key="recipe.id"
         >
           <div>
@@ -33,10 +33,10 @@
                   : 'height: 750px;overflow: hidden;'
               "
             >
-              <Flipped :flip-id="recipe.seoTitle" scale translate>
+              <Flipped :flip-id="index + ''" scale translate>
                 <q-img
                   :src="recipe | backendPictureUrl"
-                  @click="openRecipe(recipe)"
+                  @click="openRecipe(recipe, index)"
                   :ratio="1"
                 >
                   <div class="absolute-top text-subtitle2">
@@ -47,7 +47,7 @@
 
               <q-card-section>
                 <div class="row no-wrap items-center">
-                  <Flipped :flip-id="recipe.seoTitle + '_2'" scale translate>
+                  <Flipped :flip-id="index + '_2'" scale translate>
                     <div class="text-h6 my-font col ellipsis">
                       {{ recipe.title }}
                     </div>
@@ -234,7 +234,7 @@ export default {
       // }
       // console.log([...this.expandedCards].join(" "));
     },
-    openRecipe(recipe) {
+    openRecipe(recipe, index) {
       // let img = new Image();
 
       // img.onload = () => {
@@ -242,7 +242,7 @@ export default {
       //this.currentIndex = recipe.id;
       this.$router.push({
         name: "recipe",
-        params: { recipeSeoTitle: recipe.seoTitle, recipe: recipe },
+        params: { recipeSeoTitle: recipe.seoTitle, recipe: recipe, index: index },
       });
       // };
 
@@ -320,9 +320,11 @@ export default {
       //   }
       //   return element;
       // }
+      //this.currentRecipes = [];
+     // this.$nextTick(()=>{
 
-
-      let searchFilter = this.flatFilter;
+        
+        let searchFilter = this.flatFilter;
 
 
 
@@ -332,7 +334,7 @@ export default {
       // const currentPath = this.$router.currentRoute.path;
       // this.$router.push({ path: currentPath, query: searchFilter });
 
-      console.log(searchFilter);
+      //console.log(searchFilter);
       // this.currentRecipes = [];
       window.scrollTo(0, 0);
       this.$axios
@@ -340,7 +342,7 @@ export default {
         .then((response) => {
           this.currentRecipes = response.data;
           this.totalElements = response.data.totalElements;
-          console.log(response.data);
+         // console.log(response.data);
         })
         .catch(() => {
           this.$q.notify({
@@ -354,6 +356,7 @@ export default {
           this.$q.loading.hide();
           this.loading = false;
         });
+   // });
     },
   },
   data() {
@@ -366,7 +369,7 @@ export default {
       resultCount: 12,
       totalElements: 0,
       expandedCards: [],
-      resultsPerPageOptions: [12,24,36,48]
+      resultsPerPageOptions: [12,24,36,48, 96, 192]
     };
   },
   watch: {

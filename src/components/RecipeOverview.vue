@@ -46,7 +46,7 @@
     <q-page-container>
       <div style="" class="content" v-if="currentRecipe">
         <div class="img" style="">
-          <Flipped :flip-id="recipeSeoTitle" scale translate>
+          <Flipped :flip-id="index + ''" scale translate>
             <img :src="api + '/images/recipe/' + recipeSeoTitle + '_big.jpg'" />
           </Flipped>
 
@@ -61,13 +61,13 @@
           "
           style=""
         >
-          <Flipped :flip-id="recipeSeoTitle + '_1'" scale translate>
+          <Flipped :flip-id="index + '_1'" scale translate>
             <q-card
               v-bind:class="$q.screen.gt.sm ? 'q-pa-xl' : ''"
               style="min-height: calc(100vh - 700px); margin-top: 30px"
             >
               <q-card-section>
-                <Flipped :flip-id="recipeSeoTitle + '_2'" scale translate>
+                <Flipped :flip-id="index + '_2'" scale translate>
                   <div class="text-h2 my-font resultHeading">
                     {{ currentRecipe.title }}
                   </div>
@@ -168,7 +168,7 @@ import { Flipped } from "vue-flip-toolkit";
 
 export default {
   name: "RecipeOverview",
-  props: ["recipeSeoTitle", "recipe"],
+  props: ["recipeSeoTitle", "recipe", "index"],
   components: { Flipped },
   computed: {
     layout() {
