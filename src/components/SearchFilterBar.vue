@@ -1,24 +1,126 @@
 <template>
-  <q-page-sticky expand position="top" style="transform: translate(0px, 60px)">
-    <q-toolbar class="bg-grey-3 shadow-1 ">
-      <div class="" v-for="(searchKey, index) in nonEmptyFilter" :key="searchKey">
-        <template v-if="index > 0"><q-separator vertical /></template>
-        <q-btn stretch flat :label="searchKey | canonicalName" />
-        <q-chip
-        dense
-        square
-          removable
-          v-for="item in value[searchKey]"
-          :key="item.id"
-          @remove="log(searchKey, item)"
-          color="primary"
-          text-color="white"
-          >{{ item.name }}</q-chip
+  <div>
+    <q-page-sticky
+      expand
+      position="top"
+      style="transform: translate(0px, 60px)"
+    >
+      <q-toolbar class="toolbar shadow-1" style="white-space: nowrap">
+        <div
+          ref="searchFilterBar"
+          style="display: flex; flex-grow: 1; align-items: center"
         >
-      </div>
-    </q-toolbar>
+          <q-btn
+            flat
+            @click="drawer = !drawer"
+            icon="filter_alt"
+            v-if="isOverflowing"
+            label="Filter"
+            style="height:56px"
+          />
+          <template v-else>
+            <div
+              class=""
+              v-for="(searchKey, index) in nonEmptyFilter"
+              :key="searchKey"
+            >
+              <template v-if="index > 0"><q-separator vertical /></template>
+              <template >
+                <q-btn stretch flat :label="searchKey | canonicalName" />
+                <q-chip
+                  square
+                  removable
+                  clickable
+                  v-for="item in value[searchKey]"
+                  :key="item.id"
+                  @click="addToSearch(searchKey, item, false, true)"
+                  @remove="removeFromSearch(searchKey, item)"
+                  :color="searchKey == 'ingredient' ? 'primary' : 'secondary'"
+                  text-color="white"
+                  >{{ item.name }}</q-chip
+                >
+                <template v-if="value['exclude']">
+                  <q-chip
+                    square
+                    removable
+                    clickable
+                    v-for="item in value['exclude'][searchKey]"
+                    :key="item.id"
+                    @click="addToSearch(searchKey, item, false, true)"
+                    @remove="removeFromSearch(searchKey, item)"
+                    color="red"
+                    text-color="white"
+                    >{{ item.name }}</q-chip
+                  >
+                </template>
+              </template>
+            </div>
+            <q-select
+              style="padding-left: 10px; min-width: 220px"
+              filled
+              stretch
+              :options="options"
+              label="Schwierigkeit"
+              multiple
+              emit-value
+              :value="model"
+              @input="difficultyChanged"
+            >
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                  <q-item-section>
+                    <q-item-label v-html="scope.opt"></q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-toggle
+                      :value="model"
+                      @input="difficultyChanged"
+                      :val="scope.opt"
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+            <q-btn-dropdown flat filled stretch no-caps>
+              <template v-slot:label>
+                <div
+                  class="row items-center no-wrap"
+                  v-bind:style="
+                    standard > 0 ? '' : $q.dark.isActive ? 'color: rgba(255,255,255,0.7);':'color: rgba(0, 0, 0, 0.6);'
+                  "
+                >
+                  <q-icon left name="local_fire_department" />
+                  <div class="text-center">
+                    {{
+                      "Max Kcal" + (standard > 0 ? " (" + standard + ")" : "")
+                    }}
+                  </div>
+                </div>
+              </template>
+              <div class="q-pa-md">
+                <q-slider
+                  style="min-width: 280px; margin-top: 10px"
+                  :value="standard"
+                  @change="caloriesChanged"
+                  :min="0"
+                  :max="maxCalories"
+                  label-always
+                />
+              </div>
+            </q-btn-dropdown>
+          </template>
+          <q-space />
+          <q-btn
+            stretch
+            flat
+            icon="clear"
+            label="Filter löschen"
+            @click="$emit('onClearSearch')"
+          />
+        </div>
+      </q-toolbar>
 
-    <!-- 
+      <!-- 
     <q-toolbar class="YL__sticky bg-white">
       <div
         class="q-gutter-xs"
@@ -41,20 +143,168 @@
         ></div>
       </div>
     </q-toolbar> -->
-  </q-page-sticky>
+    </q-page-sticky>
+    <q-drawer v-if="isOverflowing" v-model="drawer" :width="300" overlay bordered>
+      <q-scroll-area class="fit">
+        <template>
+          <div
+            class=""
+            v-for="(searchKey, index) in nonEmptyFilter"
+            :key="searchKey"
+            style="display: flex; flex-direction: column; align-items: center; gap: 6px;"
+          >
+            <template v-if="index > 0"><q-separator /></template>
+            <template>
+              <q-btn stretch flat :label="searchKey | canonicalName" />
+              <q-chip
+                square
+                removable
+                clickable
+                v-for="item in value[searchKey]"
+                :key="item.id"
+                @click="addToSearch(searchKey, item, false, true)"
+                @remove="removeFromSearch(searchKey, item)"
+                :color="searchKey == 'ingredient' ? 'primary' : 'secondary'"
+                text-color="white"
+                >{{ item.name }}</q-chip
+              >
+              <template v-if="value['exclude']">
+                <q-chip
+                  square
+                  removable
+                  clickable
+                  v-for="item in value['exclude'][searchKey]"
+                  :key="item.id"
+                  @click="addToSearch(searchKey, item, false, true)"
+                  @remove="removeFromSearch(searchKey, item)"
+                  color="red"
+                  text-color="white"
+                  >{{ item.name }}</q-chip
+                >
+              </template>
+            </template>
+          </div>
+          <q-select
+            filled
+            stretch
+            :options="options"
+            label="Schwierigkeit"
+            multiple
+            emit-value
+            :value="model"
+            @input="difficultyChanged"
+          >
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+                <q-item-section>
+                  <q-item-label v-html="scope.opt"></q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-toggle
+                    :value="model"
+                    @input="difficultyChanged"
+                    :val="scope.opt"
+                  />
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+          <q-btn-dropdown flat filled stretch no-caps class="full-width">
+            <template v-slot:label>
+              <div
+                class="row items-center no-wrap full-width"
+                v-bind:style="
+                  standard > 0 ? '' : $q.dark.isActive ? 'color: rgba(255,255,255,0.7);':'color: rgba(0, 0, 0, 0.6);'
+                "
+              >
+                <q-icon left name="local_fire_department" />
+                <div class="text-center">
+                  {{ "Max Kcal" + (standard > 0 ? " (" + standard + ")" : "") }}
+                </div>
+              </div>
+            </template>
+            <div class="q-pa-md">
+              <q-slider
+                style="min-width: 280px; margin-top: 10px"
+                :value="standard"
+                @change="caloriesChanged"
+                :min="0"
+                :max="maxCalories"
+                label-always
+              />
+            </div>
+          </q-btn-dropdown>
+        </template>
+
+        <!-- <q-list>
+          <template v-for="(menuItem, index) in menuList">
+            <q-item
+              :key="index"
+              clickable
+              :active="menuItem.label === 'Outbox'"
+              v-ripple
+            >
+              <q-item-section avatar>
+                <q-icon :name="menuItem.icon" />
+              </q-item-section>
+              <q-item-section>
+                {{ menuItem.label }}
+              </q-item-section>
+            </q-item>
+            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+          </template>
+        </q-list> -->
+      </q-scroll-area>
+    </q-drawer>
+  </div>
 </template>
 
 <script>
-import { clone, remove } from "lodash";
+import { clone, remove, difference } from "lodash";
 
 export default {
   name: "SearchFilterBar",
   props: ["value"],
+  mounted() {
+    this.mounted = true;
+    this.checkOverflow();
+  },
+  activated() {
+    this.checkOverflow();
+  },
+  created() {
+    window.addEventListener("resize", this.checkOverflow);
+    document.addEventListener("click", this.onClickAnywhere);
+  },
+
+  destroyed() {
+    window.removeEventListener("resize", this.checkOverflow);
+    document.removeEventListener("click", this.onClickAnywhere);
+  },
   computed: {
+    // checkOverflowing() {
+    //   if (!this.mounted) return false;
+    //   var element = this.$refs.searchFilterBar;
+    //   return (
+    //     element.offsetHeight < element.scrollHeight ||
+    //     element.offsetWidth < element.scrollWidth
+    //   );
+    // },
     nonEmptyFilter() {
-      return Object.keys(this.value)
+      let a = Object.keys(this.value)
         .sort()
-        .filter((key) => this.value[key].length > 0);
+        .filter(
+          (key) =>
+            key != "difficulty" &&
+            key != "calories" &&
+            key != "exclude" &&
+            (this.value[key].length > 0 ||
+              (this.value["exclude"] &&
+                key in this.value["exclude"] &&
+                this.value["exclude"][key].length > 0))
+        );
+      console.log(a);
+      return a;
     },
   },
   filters: {
@@ -62,16 +312,88 @@ export default {
       switch (name) {
         case "ingredient":
           return "Zutaten";
+        case "ingredient_special":
+          return "Zutaten*";
         case "recipe":
           return "Rezepte";
         case "tag":
           return "Kategorien";
+        case "tag_special":
+          return "Kategorien*";
         default:
           return name;
       }
     },
   },
   methods: {
+    onClickAnywhere(event) {
+      console.log("clickoo");
+      // check if clicked outside of search bar
+      if (!this.drawer) {
+        return;
+      }
+
+      if (event.target.classList.contains("q-drawer__backdrop")) {
+        this.drawer = false;
+      }
+    },
+    checkOverflow() {
+      this.isOverflowing = false;
+      this.$nextTick(() => {
+        if (!this.$refs.searchFilterBar) return;
+        this.isOverflowing =
+          this.$refs.searchFilterBar.offsetWidth > window.innerWidth;
+        console.log("overflow", this.isOverflowing);
+      });
+    },
+    englishDifficulty(name) {
+      switch (name) {
+        case "Einfach":
+          return "EASY";
+        case "Medium":
+          return "MEDIUM";
+        case "Schwer":
+          return "HARD";
+        default:
+          return name;
+      }
+    },
+    caloriesChanged(event) {
+      this.standard = event;
+      //console.log("STANDARD", this.standard);
+      this.addToSearch("calories", this.standard, true);
+    },
+    difficultyChanged(event) {
+      event = event.sort();
+      if (this.model.length > event.length) {
+        console.log("remove", _.difference(this.model, event)[0]);
+
+        //deleted
+        this.$emit(
+          "onRemoveFromSearch",
+          "difficulty",
+          this.englishDifficulty(_.difference(this.model, event)[0])
+        );
+      } else {
+        //added
+        console.log("add", _.difference(event, this.model)[0]);
+        this.$emit(
+          "onAddToSearch",
+          "difficulty",
+          this.englishDifficulty(_.difference(event, this.model)[0])
+        );
+      }
+      // console.log(this.model);
+      this.model = event;
+      // console.log(event);
+    },
+    addToSearch(type, value, single = false, exclude = false) {
+      console.log("addToSearch", type, value, single, exclude);
+      this.$emit("onAddToSearch", type, value, single, exclude);
+    },
+    removeFromSearch(type, value) {
+      this.$emit("onRemoveFromSearch", type, value);
+    },
     log(key, item) {
       this.dataCopy = _.clone(this.value);
       _.remove(this.dataCopy[key], item);
@@ -83,13 +405,72 @@ export default {
   },
   data() {
     return {
+      mounted: false,
       dataCopy: {},
+      maxCalories: 1000,
+      model: [],
+      standard: 0,
+      options: ["Einfach", "Medium", "Schwer"],
+      isOverflowing: false,
+      drawer: false,
+      menuList: [
+        {
+          icon: "inbox",
+          label: "Inbox",
+          separator: true,
+        },
+        {
+          icon: "send",
+          label: "Outbox",
+          separator: false,
+        },
+        {
+          icon: "delete",
+          label: "Trash",
+          separator: false,
+        },
+        {
+          icon: "error",
+          label: "Spam",
+          separator: true,
+        },
+        {
+          icon: "settings",
+          label: "Settings",
+          separator: false,
+        },
+        {
+          icon: "feedback",
+          label: "Send Feedback",
+          separator: false,
+        },
+        {
+          icon: "help",
+          iconColor: "primary",
+          label: "Help",
+          separator: false,
+        },
+      ],
     };
+  },
+  watch: {
+    "$props.value": {
+      handler: function (val, oldVal) {
+        this.checkOverflow();
+      },
+      deep: true,
+    },
   },
 };
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
+.q-field--filled.q-field--dark .q-field__control, .q-field--filled.q-field--dark .q-field__control::before, .q-field--filled .q-field__control
+  background: initial
+
+.toolbar
+  background-color: var(--q-color-background)
+  z-index: 10
 .YL
   &__sticky
     padding: 10px

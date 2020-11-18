@@ -1,5 +1,6 @@
 <template>
   <div class="searchResult">
+    <!-- <q-scroll-area  style="height: 500px;"> -->
     <template v-if="this.search == ''"> </template>
     <template v-else>
       <q-list bordered separator padding>
@@ -10,106 +11,109 @@
         tag="div"
         class="q-list q-list--separator"
       > -->
-        <template v-if="ingredients.length > 0">
+        <template v-if="!loading">
+          <template v-if="ingredients.length > 0">
+            <q-item
+              clickable
+              v-ripple
+              v-for="(ingredient, index) in ingredients"
+              :key="ingredient.slug"
+              class="list-complete-item"
+              :active="selectedIndex == index"
+              active-class="bg-blue-1"
+              @click="addToSearch('ingredient', ingredient)"
+            >
+              <q-item-section avatar>
+                <q-avatar circle size="40px">
+                  <q-img :src="api + ingredient.pictureUrl" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section no-wrap>
+                <div class="row">
+                  <div class="col-8">
+                    <h6 class="resultHeading">
+                      <span v-html="makeBold(ingredient.name)"></span>
+                    </h6>
+                  </div>
+                </div>
+              </q-item-section>
+
+              <q-item-section side>
+                <q-spinner-dots
+                  color="primary"
+                  size="40px"
+                  v-if="ingredient.recipeCount == undefined"
+                />
+                <q-chip v-else>
+                  <q-avatar
+                    color="primary"
+                    text-color="white"
+                    font-size="14px"
+                    >{{ ingredient.recipeCount }}</q-avatar
+                  >
+                  Rezept{{ ingredient.recipeCount != 1 ? "e" : "" }}
+                </q-chip>
+              </q-item-section>
+            </q-item>
+          </template>
           <q-item
             clickable
             v-ripple
-            v-for="(ingredient, index) in ingredients"
-            :key="ingredient.slug"
             class="list-complete-item"
-            :active="selectedIndex == index"
+            :active="selectedIndex == 0"
             active-class="bg-blue-1"
             @click="
-              addToSearch('ingredient', {
-                id: ingredient.id,
-                name: ingredient.name,
+              addToSearch('ingredient_special', {
+                id: search,
+                name: '*' + search + '*',
               })
             "
           >
             <q-item-section avatar>
-              <q-avatar circle size="60px">
-                <q-img :src="'http://localhost:8080' + ingredient.pictureUrl" />
+              <q-avatar circle size="40px">
+                <q-img :src="api + '/images/wildcard.png'" />
               </q-avatar>
             </q-item-section>
             <q-item-section no-wrap>
               <div class="row">
                 <div class="col-8">
                   <h6 class="resultHeading">
-                    <span v-html="makeBold(ingredient.name)"></span>
+                    <span
+                      v-html="
+                        'Alle Zutaten die \'' +
+                        makeBold(this.search) +
+                        '\' enthalten'
+                      "
+                    ></span>
                   </h6>
                 </div>
               </div>
             </q-item-section>
 
+            <!-- TODO: count with added filter -->
             <q-item-section side>
               <q-spinner-dots
                 color="primary"
-                size="60px"
-                v-if="ingredient.recipeCount == undefined"
+                size="40px"
+                v-if="specialRecipeCount == -1"
               />
               <q-chip v-else>
                 <q-avatar color="primary" text-color="white" font-size="14px">{{
-                  ingredient.recipeCount
+                  specialRecipeCount
                 }}</q-avatar>
-                Rezept{{ ingredient.recipeCount != 1 ? "e" : "" }}
+                Rezept{{ specialRecipeCount != 1 ? "e" : "" }}
               </q-chip>
             </q-item-section>
           </q-item>
         </template>
-        <template v-else-if="this.loading">
+        <template v-else>
           <q-item
             style="max-width: 400px"
             v-for="index in 7"
             :key="index + 'I'"
           >
             <q-item-section avatar>
-              <q-skeleton size="60px" type="QAvatar" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label>
-                <q-skeleton type="text" />
-              </q-item-label>
-              <q-item-label caption>
-                <q-skeleton type="text" width="65%" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </template>
-
-        <q-item-label header class="heading">Rezepte</q-item-label>
-
-        <template v-if="recipes.length > 0">
-          <q-item
-            clickable
-            v-ripple
-            v-for="recipe in recipes"
-            :key="recipe.seoTitle"
-            class="list-complete-item"
-            @click="
-              addToSearch('recipe', { id: recipe.id, name: recipe.title })
-            "
-          >
-            <q-item-section avatar>
-              <q-avatar circle size="60px">
-                <q-img :src="'http://localhost:8080' + recipe.pictureUrl" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section no-wrap>
-              <h6 class="resultHeading">
-                <span v-html="makeBold(recipe.title)"></span>
-              </h6>
-            </q-item-section>
-          </q-item>
-        </template>
-        <template v-else-if="this.loading">
-          <q-item
-            style="max-width: 400px"
-            v-for="index in 3"
-            :key="index + 'R'"
-          >
-            <q-item-section avatar>
-              <q-skeleton size="60px" type="QAvatar" />
+              <q-skeleton size="40px" type="QAvatar" />
             </q-item-section>
 
             <q-item-section>
@@ -129,7 +133,7 @@
             <div v-if="tags.length > 0">
               <q-chip
                 clickable
-                @click="addToSearch('tag', { id: tag.id, name: tag.name })"
+                @click="addToSearch('tag', tag)"
                 color="primary"
                 text-color="white"
                 v-for="tag in tags"
@@ -148,14 +152,64 @@
             </div>
           </q-item-section>
         </q-item>
+
+        <q-item-label header class="heading">Rezepte</q-item-label>
+
+        <template v-if="recipes.length > 0">
+          <q-item
+            clickable
+            v-ripple
+            v-for="recipe in recipes"
+            :key="recipe.seoTitle"
+            class="list-complete-item"
+            :to="{
+              name: 'recipe',
+              params: { recipeSeoTitle: recipe.seoTitle, recipe: recipe },
+            }"
+          >
+            <q-item-section avatar>
+              <q-avatar circle size="40px">
+                <q-img :src="recipe | backendPictureUrl" :ratio="1" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section no-wrap>
+              <h6 class="resultHeading">
+                <span v-html="makeBold(recipe.title)"></span>
+              </h6>
+            </q-item-section>
+          </q-item>
+        </template>
+        <template v-else-if="this.loading">
+          <q-item
+            style="max-width: 400px"
+            v-for="index in 3"
+            :key="index + 'R'"
+          >
+            <q-item-section avatar>
+              <q-skeleton size="40px" type="QAvatar" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" />
+              </q-item-label>
+              <q-item-label caption>
+                <q-skeleton type="text" width="65%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+
         <!-- </transition-group> -->
       </q-list>
     </template>
+    <!-- </q-scroll-area> -->
   </div>
 </template>
 
 <script>
 import CancelToken from "axios/lib/cancel/CancelToken";
+import SearchFilterMixin from "../mixins/SearchFilterMixin.js";
 
 export default {
   name: "SearchResultList",
@@ -164,7 +218,12 @@ export default {
       type: String,
       required: true,
     },
+    searchFilter: {
+      type: Object,
+      required: true,
+    },
   },
+  mixins: [SearchFilterMixin],
   data() {
     return {
       selectedIndex: -1,
@@ -174,9 +233,23 @@ export default {
       loading: false,
       cancelToken: CancelToken.source(),
       promises: [],
+      api: process.env.API,
+      specialRecipeCount: -1,
     };
   },
-  filters: {},
+  computed: {
+    searchFilterEmpty() {
+      return this.deepCheck(this.value);
+    },
+    flatFilter() {
+      return this.flatten(this.searchFilter);
+    },
+  },
+  filters: {
+    backendPictureUrl(recipe) {
+      return process.env.API + "/images/recipe/" + recipe.seoTitle + "_big.jpg"; //url.split("/").slice(3).join("/");
+    },
+  },
 
   methods: {
     makeBold(text) {
@@ -188,9 +261,12 @@ export default {
       const index = textSmall.indexOf(searchInput);
 
       let result = "";
-      result += text.substring(0,index);
-      result += "<span class='text-weight-bolder' style='text-decoration: underline'>" + text.substring(index, index+searchInput.length) + "</span>";
-      result += text.substring(index+searchInput.length, text.length);
+      result += text.substring(0, index);
+      result +=
+        "<span class='text-weight-bolder' style='text-decoration: underline'>" +
+        text.substring(index, index + searchInput.length) +
+        "</span>";
+      result += text.substring(index + searchInput.length, text.length);
 
       // for (let idx = 0; idx < text.length; idx++) {
       //   if (idx >= index && idx < index + searchInput.length) {
@@ -208,17 +284,17 @@ export default {
 
     selectNext() {
       this.selectedIndex++;
-      console.log(this.selectedIndex);
+      //  console.log(this.selectedIndex);
     },
     selectPrev() {
       this.selectedIndex--;
-      console.log(this.selectedIndex);
+      //   console.log(this.selectedIndex);
     },
     async loadData(name) {
       this.cancelToken.cancel();
       //await Promise.all(this.promises);
       let values = await Promise.all(this.promises);
-      console.log("ending2");
+      //  console.log("ending2");
       for (let value of values) {
         if (Array.isArray(value)) {
           await Promise.all(value);
@@ -236,16 +312,16 @@ export default {
       }
       //const CancelToken = axios.CancelToken;
       this.loading = true;
-      console.log("starting");
+      //console.log("starting");
 
-      console.log(this.$axios.defaults.baseURL);
+      // console.log(this.$axios.defaults.baseURL);
       let ingredientRequestIdx = this.promises.length;
       this.promises[ingredientRequestIdx] = this.$axios
-        .get("http://localhost:8080/ingredient", {
+        .get("/ingredient", {
           cancelToken: this.cancelToken.token,
           params: {
             name: name,
-            count: 7,
+            count: 5,
           },
         })
         .then((response) => {
@@ -255,10 +331,13 @@ export default {
             //response.data[i].recipeCount = -1;
             //this.ingredients.push(response.data[i]);
             innerPromises[innerPromises.length] = this.$axios
-              .get("http://localhost:8080/recipe/count", {
-                cancelToken: this.cancelToken.token,
-                params: { ingredientId: this.ingredients[i].id },
-              })
+              .post(
+                "/recipe/count/id/" + this.ingredients[i].id,
+                this.flatFilter,
+                {
+                  cancelToken: this.cancelToken.token,
+                }
+              )
               .then((innerResponse) => {
                 this.ingredients[i].recipeCount = innerResponse.data;
                 //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
@@ -269,6 +348,22 @@ export default {
                 console.log("aborted");
               });
           }
+          if (this.search) {
+            innerPromises[innerPromises.length] = this.$axios
+              .post("/recipe/count/name/" + this.search, this.flatFilter, {
+                cancelToken: this.cancelToken.token,
+              })
+              .then((innerResponse) => {
+                this.specialRecipeCount = innerResponse.data;
+                //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
+                //this.$set(this.ingredients, i, this.ingredients[i]);
+              })
+              .catch(() => {
+                //nothing to do
+                console.log("aborted");
+              });
+          }
+
           return innerPromises;
         })
         .catch(() => {
@@ -281,7 +376,7 @@ export default {
         });
 
       this.promises[this.promises.length] = this.$axios
-        .get("http://localhost:8080/recipe", {
+        .get("/recipe", {
           cancelToken: this.cancelToken.token,
           params: {
             name: name,
@@ -302,11 +397,11 @@ export default {
         });
 
       this.promises[this.promises.length] = this.$axios
-        .get("http://localhost:8080/tag", {
+        .get("/tag", {
           params: {
             cancelToken: this.cancelToken.token,
             name: name,
-            count: 7,
+            count: 5,
           },
         })
         .then((response) => {
@@ -327,21 +422,21 @@ export default {
 
       Promise.all(this.promises).then((values) => {
         this.loading = false;
-        console.log("ending");
+        //    console.log("ending");
       });
     },
   },
   mounted: function () {
     // `this` points to the vm instance
-    console.log("mounted");
-    console.log(this.search);
+    // console.log("mounted");
+    // console.log(this.search);
     this.loadData(this.search);
   },
   watch: {
     "$props.search": {
       handler: function (val, oldVal) {
-        console.log("watch", oldVal, val);
-
+        //    console.log("watch", oldVal, val);
+        this.specialRecipeCount = -1;
         this.loadData(this.search);
       },
       deep: true,
@@ -351,6 +446,7 @@ export default {
 </script>
 <style scoped>
 .list-complete-item {
+  padding: 0px;
   transition: all 0.5s ease;
   /* display: inline-block; */
   /*margin-right: 10px; */
@@ -368,7 +464,7 @@ export default {
 </style>
 <style lang="sass" scoped>
 .resultHeading
-  font-size: calc(12px + (18 - 12) * ((100vw - 300px) / (1600 - 300)))
+  font-size: calc(14px + (18 - 14) * ((100vw - 300px) / (1600 - 300)))
   margin: 0px
   overflow: hidden
   text-overflow: ellipsis
@@ -376,9 +472,9 @@ export default {
   font-weight: bold
   letter-spacing: 3px
 .q-item__section--avatar
-  left: -45px
+  left: -20px
   position: relative
   padding-right: 0px
 .searchResult
-  background-color: rgba(255, 255, 255, 1)
+  background-color: var(--q-color-background)
 </style>
