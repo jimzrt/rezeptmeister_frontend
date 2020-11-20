@@ -1,10 +1,54 @@
 <template>
-  <div class="searchResult">
+  <div class="searchResult" style="overflow: auto; max-height: 90vh">
     <!-- <q-scroll-area  style="height: 500px;"> -->
-    <template v-if="this.search == ''"> </template>
+    <template v-if="this.search == ''">
+          <q-item
+            style="max-width: 400px"
+            v-for="index in 6"
+            :key="index + 'I'"
+          >
+            <q-item-section avatar>
+              <q-skeleton size="40px" type="QAvatar" />
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>
+                <q-skeleton type="text" />
+              </q-item-label>
+              <q-item-label caption>
+                <q-skeleton type="text" width="65%" />
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+    </template>
+    <template
+      v-else-if="
+        !loading &&
+        ingredients.length == 0 &&
+        tags.length == 0 &&
+        recipes.length == 0
+      "
+    >
+      <q-item class="list-complete-item">
+        <q-item-section no-wrap>
+          <div class="row">
+            <div class="col-8">
+              <h6 class="resultHeading">
+                <span>Die Eingabe "{{search}}" liefert kein Ergebnis!</span>
+              </h6>
+            </div>
+          </div>
+        </q-item-section>
+      </q-item>
+    </template>
     <template v-else>
       <q-list bordered separator padding>
-        <q-item-label class="heading" header>Zutaten</q-item-label>
+        <q-item-label
+          v-if="loading || ingredients.length > 0"
+          class="heading"
+          header
+          >Zutaten</q-item-label
+        >
 
         <!-- <transition-group
         name="list-complete"
@@ -51,60 +95,63 @@
                     font-size="14px"
                     >{{ ingredient.recipeCount }}</q-avatar
                   >
-                  Rezept{{ ingredient.recipeCount != 1 ? "e" : "" }}
+                  Rezepte
+                </q-chip>
+              </q-item-section>
+            </q-item>
+            <q-item
+              clickable
+              v-ripple
+              class="list-complete-item"
+              :active="selectedIndex == 0"
+              active-class="bg-blue-1"
+              @click="
+                addToSearch('ingredient_special', {
+                  id: search,
+                  name: '*' + search + '*',
+                })
+              "
+            >
+              <q-item-section avatar>
+                <q-avatar circle size="40px">
+                  <q-img :src="api + '/images/wildcard.png'" />
+                </q-avatar>
+              </q-item-section>
+              <q-item-section no-wrap>
+                <div class="row">
+                  <div class="col-8">
+                    <h6 class="resultHeading">
+                      <span
+                        v-html="
+                          'Alle Zutaten die \'' +
+                          makeBold(this.search) +
+                          '\' enthalten'
+                        "
+                      ></span>
+                    </h6>
+                  </div>
+                </div>
+              </q-item-section>
+
+              <!-- TODO: count with added filter -->
+              <q-item-section side>
+                <q-spinner-dots
+                  color="primary"
+                  size="40px"
+                  v-if="specialRecipeCount == -1"
+                />
+                <q-chip v-else>
+                  <q-avatar
+                    color="primary"
+                    text-color="white"
+                    font-size="14px"
+                    >{{ specialRecipeCount }}</q-avatar
+                  >
+                  Rezepte
                 </q-chip>
               </q-item-section>
             </q-item>
           </template>
-          <q-item
-            clickable
-            v-ripple
-            class="list-complete-item"
-            :active="selectedIndex == 0"
-            active-class="bg-blue-1"
-            @click="
-              addToSearch('ingredient_special', {
-                id: search,
-                name: '*' + search + '*',
-              })
-            "
-          >
-            <q-item-section avatar>
-              <q-avatar circle size="40px">
-                <q-img :src="api + '/images/wildcard.png'" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section no-wrap>
-              <div class="row">
-                <div class="col-8">
-                  <h6 class="resultHeading">
-                    <span
-                      v-html="
-                        'Alle Zutaten die \'' +
-                        makeBold(this.search) +
-                        '\' enthalten'
-                      "
-                    ></span>
-                  </h6>
-                </div>
-              </div>
-            </q-item-section>
-
-            <!-- TODO: count with added filter -->
-            <q-item-section side>
-              <q-spinner-dots
-                color="primary"
-                size="40px"
-                v-if="specialRecipeCount == -1"
-              />
-              <q-chip v-else>
-                <q-avatar color="primary" text-color="white" font-size="14px">{{
-                  specialRecipeCount
-                }}</q-avatar>
-                Rezept{{ specialRecipeCount != 1 ? "e" : "" }}
-              </q-chip>
-            </q-item-section>
-          </q-item>
         </template>
         <template v-else>
           <q-item
@@ -127,8 +174,10 @@
           </q-item>
         </template>
 
-        <q-item-label header class="heading">Kategorien</q-item-label>
-        <q-item>
+        <q-item-label v-if="loading || tags.length > 0" header class="heading"
+          >Kategorien</q-item-label
+        >
+        <q-item v-if="loading || tags.length > 0">
           <q-item-section>
             <div v-if="tags.length > 0">
               <q-chip
@@ -153,7 +202,12 @@
           </q-item-section>
         </q-item>
 
-        <q-item-label header class="heading">Rezepte</q-item-label>
+        <q-item-label
+          v-if="loading || recipes.length > 0"
+          header
+          class="heading"
+          >Rezepte</q-item-label
+        >
 
         <template v-if="recipes.length > 0">
           <q-item
@@ -472,7 +526,7 @@ export default {
   font-weight: bold
   letter-spacing: 3px
 .q-item__section--avatar
-  left: -20px
+  //left: -20px
   position: relative
   padding-right: 0px
 .searchResult

@@ -35,7 +35,7 @@
                   :key="item.id"
                   @click="addToSearch(searchKey, item, false, true)"
                   @remove="removeFromSearch(searchKey, item)"
-                  :color="searchKey == 'ingredient' ? 'primary' : 'secondary'"
+                  :color="(searchKey == 'ingredient' || searchKey == 'ingredient_special') ? 'primary' : 'secondary'"
                   text-color="white"
                   >{{ item.name }}</q-chip
                 >

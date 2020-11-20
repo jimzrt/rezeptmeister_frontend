@@ -27,7 +27,7 @@
           </q-btn>
 
           <div
-            v-bind:style="$q.screen.gt.sm ? '' : 'left:80px;right:10px'"
+            v-bind:style="$q.screen.gt.sm ? '' : searchFocus ? 'left:80px;right:10px':'left:10px;right:10px'"
             class="toolio"
             v-bind:class="{ inactive: !searchFocus && searchFilterEmpty }"
           >
@@ -257,9 +257,12 @@ export default {
   },
   methods: {
     addToSearch(type, value, single = false, exclude = false) {
+
       console.log(exclude ? "exclude" : "add", type, value);
       this.searchInput = "";
 
+
+      
       if (single) {
         this.$set(this.searchFilter, type, value);
         return;
@@ -351,6 +354,7 @@ export default {
       this.$refs.searchResult.selectPrev();
     },
     onClickAnywhere(event) {
+      event.preventDefault();
       // check if clicked outside of search bar
       const el = this.$refs.searchBar.$el;
       if (el == event.target || el.contains(event.target)) {

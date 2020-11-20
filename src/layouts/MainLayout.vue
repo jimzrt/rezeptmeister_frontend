@@ -1,5 +1,5 @@
 <template>
-  <Flipper :flip-key="key" spring="">
+  <Flipper :flip-key="key" spring="" ref="test">
     <keep-alive exclude="RecipeOverview">
       <router-view />
     </keep-alive>
@@ -24,7 +24,14 @@ export default {
       return this.$route.path;
     },
   },
-  methods: {},
+  methods: {
+  },
+  mounted() {
+    this.$refs.test.test = function () {
+      console.log(this.flipInstance.flipCallbacks);
+    };
+    this.$refs.test.test();
+  },
 };
 </script>
 <style scoped>
