@@ -30,7 +30,7 @@
               <!-- <q-icon name="place" /> -->
               <div>{{ recipe.calories }} kcal</div>
               <div>
-                {{ recipe.preperationTimeInSeconds | formatDate }}
+                {{ recipe.totalTimeInSeconds | formatDate }}
               </div>
             </div>
           </div>

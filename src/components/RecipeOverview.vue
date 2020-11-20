@@ -78,43 +78,67 @@
 
               <q-card-section v-if="loaded" class="fade-card">
                 <div class="q-pa-md">
-                  <div class="row q-pa-md">
-                    <div class="col-12 col-md-12">
-                      <div class="text-h4 text-left">Zutaten</div>
-                      <q-markup-table
-                        v-for="(ingredientGroup,
-                        index) in currentRecipe.ingredientGroups"
-                        :key="index"
-                        separator="cell"
-                        class="col"
-                      >
-                        <thead v-if="ingredientGroup.name">
-                          <tr>
-                            <th colspan="2">
-                              <div class="text-h5 text-left">
-                                {{ ingredientGroup.name }}
-                              </div>
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="[ingredient, amount] of Object.entries(
-                              ingredientGroup.amounts
-                            )"
-                            :key="ingredient.id"
-                          >
-                            <td>
-                              <template v-if="amount.quantity != 0">
-                                {{ amount.quantity }} {{ amount.unit.name }}
-                              </template>
-                            </td>
+                  <div class="text-h4 text-left">
+                    Zutaten für
+                    <q-btn
+                      round
+                      color="primary"
+                      icon="remove"
+                      @click="decrementServingSize"
+                    />
+                    {{ servingSize }}
+                    <q-btn
+                      round
+                      color="primary"
+                      icon="add"
+                      @click="incrementServingSize"
+                    />
+                    Portionen
+                  </div>
 
-                            <td>{{ ingredient }}</td>
-                          </tr>
-                        </tbody>
-                      </q-markup-table>
-                    </div>
+                  <div class="row q-pa-md">
+                    <q-markup-table
+                      v-for="(ingredientGroup,
+                      index) in currentRecipe.ingredientGroups"
+                      :key="index"
+                      separator="cell"
+                      class="col"
+                      style="min-width: 400px; padding: 10px; margin: 20px"
+                    >
+                      <thead v-if="ingredientGroup.name">
+                        <tr>
+                          <th colspan="2">
+                            <div class="text-h5 text-left">
+                              {{ ingredientGroup.name }}
+                            </div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="[ingredient, amount] of Object.entries(
+                            ingredientGroup.amounts
+                          )"
+                          :key="ingredient.id"
+                        >
+                          <td>
+                            <template v-if="amount.quantity != 0">
+                              {{
+                                Math.round(
+                                  amount.quantity *
+                                    (servingSize / recipe.defaultServingSize) *
+                                    100 +
+                                    Number.EPSILON
+                                ) / 100
+                              }}
+                              {{ amount.unit.name }}
+                            </template>
+                          </td>
+
+                          <td>{{ ingredient }}</td>
+                        </tr>
+                      </tbody>
+                    </q-markup-table>
                     <!-- <div class="col-12 col-md-6">
                       <q-knob
                         :min="5"
@@ -195,7 +219,10 @@ export default {
     // `this` points to the vm instance
     console.log("here");
 
-    if (this.recipe) this.currentRecipe = this.recipe;
+    if (this.recipe) {
+      this.currentRecipe = this.recipe;
+      this.servingSize = this.recipe.defaultServingSize;
+    }
     //if (!this.currentRecipe)
     this.loadData();
   },
@@ -225,6 +252,13 @@ export default {
     },
   },
   methods: {
+    decrementServingSize() {
+      if (this.servingSize == 1) return;
+      this.servingSize--;
+    },
+    incrementServingSize() {
+      this.servingSize++;
+    },
     loadData() {
       //filter ids
       this.loading = true;
@@ -237,6 +271,7 @@ export default {
         })
         .then((response) => {
           this.currentRecipe = response.data;
+          this.servingSize = response.data.defaultServingSize;
           //this.recipeImageUrl = this.currentRecipe.pictureUrlBig;
           //console.log(response.data);
         })
@@ -263,6 +298,7 @@ export default {
       currentRecipe: null,
       api: process.env.API,
       loaded: false,
+      servingSize: 0,
     };
   },
   //   watch: {

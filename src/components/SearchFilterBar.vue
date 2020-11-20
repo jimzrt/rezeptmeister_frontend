@@ -122,7 +122,7 @@
                 <div
                   class="row items-center no-wrap"
                   v-bind:style="
-                    prepTime > 0
+                    totalTime > 0
                       ? ''
                       : $q.dark.isActive
                       ? 'color: rgba(255,255,255,0.7);'
@@ -132,26 +132,26 @@
                   <q-icon left name="schedule" />
                   <div class="text-center">
                     Max Zubereitungszeit
-                    <template v-if="prepTime > 0"
-                      >({{ prepTime | formatDate }})</template
+                    <template v-if="totalTime > 0"
+                      >({{ totalTime | formatDate }})</template
                     >
                   </div>
                 </div>
               </template>
               <div class="q-pa-md">
-                <!-- todo: get max prepTime -->
+                <!-- todo: get max totalTime -->
                 <q-slider
                   style="min-width: 280px; margin-top: 10px"
-                  :value="prepTime"
+                  :value="totalTime"
                   :min="0"
-                  :max="maxPrepTime"
+                  :max="maxtotalTime"
                   :step="300"
                   label-always
-                  :label-value="prepTimeLabel | formatDate"
-                  @change="prepTimeChanged"
+                  :label-value="totalTimeLabel | formatDate"
+                  @change="totalTimeChanged"
                   @input="
                     (val) => {
-                      prepTimeLabel = val;
+                      totalTimeLabel = val;
                     }
                   "
                   snap
@@ -304,7 +304,7 @@
                 <div
                   class="row items-center no-wrap full-width"
                   v-bind:style="
-                    prepTime > 0
+                    totalTime > 0
                       ? ''
                       : $q.dark.isActive
                       ? 'color: rgba(255,255,255,0.7);'
@@ -314,26 +314,26 @@
                   <q-icon left name="schedule" />
                   <div class="text-center">
                     Max Zubereitungszeit
-                    <template v-if="prepTime > 0"
-                      >({{ prepTime | formatDate }})</template
+                    <template v-if="totalTime > 0"
+                      >({{ totalTime | formatDate }})</template
                     >
                   </div>
                 </div>
               </template>
               <div class="q-pa-md">
-                <!-- todo: get max prepTime -->
+                <!-- todo: get max totalTime -->
                 <q-slider
                   style="min-width: 280px; margin-top: 10px"
-                  :value="prepTime"
+                  :value="totalTime"
                   :min="0"
-                  :max="maxPrepTime"
+                  :max="maxtotalTime"
                   :step="300"
                   label-always
-                  :label-value="prepTimeLabel | formatDate"
-                  @change="prepTimeChanged"
+                  :label-value="totalTimeLabel | formatDate"
+                  @change="totalTimeChanged"
                   @input="
                     (val) => {
-                      prepTimeLabel = val;
+                      totalTimeLabel = val;
                     }
                   "
                   snap
@@ -480,9 +480,9 @@ export default {
           return name;
       }
     },
-    prepTimeChanged(event) {
-      this.prepTime = event;
-      this.addToSearch("prepTime", this.prepTime, true);
+    totalTimeChanged(event) {
+      this.totalTime = event;
+      this.addToSearch("totalTime", this.totalTime, true);
     },
     caloriesChanged(event) {
       this.standard = event;
@@ -534,11 +534,11 @@ export default {
       mounted: false,
       dataCopy: {},
       maxCalories: 1000,
-      maxPrepTime: 10800,
+      maxtotalTime: 10800,
       model: [],
       standard: 0,
-      prepTime: 0,
-      prepTimeLabel: 0,
+      totalTime: 0,
+      totalTimeLabel: 0,
       options: ["Einfach", "Medium", "Schwer"],
       isOverflowing: false,
       drawer: false,
