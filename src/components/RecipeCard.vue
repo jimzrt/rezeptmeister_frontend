@@ -116,12 +116,12 @@ export default {
     formatDate(seconds) {
       let formatedDate = "";
       var h = Math.floor(seconds / 3600);
-      if(h > 0){
-          formatedDate += (h + " Std ");
+      if (h > 0) {
+        formatedDate += h + " Std ";
       }
-      var m = Math.floor(seconds % 3600 / 60);
-      if(m > 0){
-          formatedDate += (m + " Min");
+      var m = Math.floor((seconds % 3600) / 60);
+      if (m > 0) {
+        formatedDate += m + " Min";
       }
       return formatedDate;
       //return new Date(seconds * 1000).toISOString().substr(11, 8);

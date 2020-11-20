@@ -24,16 +24,19 @@
           style="margin-bottom: 80px; padding-top: 40px"
           v-if="currentRecipes.length > 0"
         >
-
           <!-- v-show="!loading" -->
-          <RecipeCard
-            :recipe="recipe"
-            :index="index"
+          <q-intersection
+            style="min-height: 768px; width: 400px"
             v-for="(recipe, index) in currentRecipes"
             :key="recipe.id"
-            @onAddToSearch="addToSearch"
-          />
-          <div v-for="i in currentPlaceholders" :key="i+ '_ph'">
+          >
+            <RecipeCard
+              :recipe="recipe"
+              :index="index"
+              @onAddToSearch="addToSearch"
+            />
+          </q-intersection>
+          <!-- <div v-for="i in currentPlaceholders" :key="i+ '_ph'">
             <q-card style="width: 400px; height: 785px">
               <q-item style="height: 54px">
                 <q-item-section>
@@ -53,7 +56,7 @@
               <q-separator />
               <q-skeleton type="text" v-for="i in 10" :key="i + '_sk'" />
             </q-card>
-          </div>
+          </div> -->
         </div>
 
         <div
@@ -265,22 +268,23 @@ export default {
       this.loadPromise = this.$axios
         .post("/recipe/search", searchFilter)
         .then(async (response) => {
-                this.currentRecipes = [];
+          this.currentRecipes = [];
 
           this.totalElements = response.data.totalElements;
           this.totalPages = response.data.totalPages;
           //Todo make better yo
-          this.currentPlaceholders = response.data.content.length;
-          for (let recipe of response.data.content) {
-            //console.log("add", recipe);
-            this.currentRecipes.push(Object.freeze(recipe));
-            this.currentPlaceholders--;
-            await this.sleep(0);
-            if (localNonce != this.cancelToken) {
-              console.log("cancel!");
-              return;
-            }
-          }
+          //this.currentPlaceholders = response.data.content.length;
+          this.currentRecipes = Object.freeze(response.data.content);
+          // for (let recipe of response.data.content) {
+          //   //console.log("add", recipe);
+          //   this.currentRecipes.push(Object.freeze(recipe));
+          //   this.currentPlaceholders--;
+          //   await this.sleep(0);
+          //   if (localNonce != this.cancelToken) {
+          //     console.log("cancel!");
+          //     return;
+          //   }
+          // }
 
           //this.currentRecipes = Object.freeze(response.data);
 
@@ -366,5 +370,4 @@ export default {
   background-color: var(--q-color-background)
 .q-skeleton--anim-wave, .q-skeleton--anim-blink, .q-skeleton--anim-pop
   z-index: 0
-
 </style>
