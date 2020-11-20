@@ -16,7 +16,7 @@
             icon="filter_alt"
             v-if="isOverflowing"
             label="Filter"
-            style="height:56px"
+            style="height: 56px"
           />
           <template v-else>
             <div
@@ -25,7 +25,7 @@
               :key="searchKey"
             >
               <template v-if="index > 0"><q-separator vertical /></template>
-              <template >
+              <template>
                 <q-btn stretch flat :label="searchKey | canonicalName" />
                 <q-chip
                   square
@@ -35,7 +35,12 @@
                   :key="item.id"
                   @click="addToSearch(searchKey, item, false, true)"
                   @remove="removeFromSearch(searchKey, item)"
-                  :color="(searchKey == 'ingredient' || searchKey == 'ingredient_special') ? 'primary' : 'secondary'"
+                  :color="
+                    searchKey == 'ingredient' ||
+                    searchKey == 'ingredient_special'
+                      ? 'primary'
+                      : 'secondary'
+                  "
                   text-color="white"
                   >{{ item.name }}</q-chip
                 >
@@ -86,7 +91,11 @@
                 <div
                   class="row items-center no-wrap"
                   v-bind:style="
-                    standard > 0 ? '' : $q.dark.isActive ? 'color: rgba(255,255,255,0.7);':'color: rgba(0, 0, 0, 0.6);'
+                    standard > 0
+                      ? ''
+                      : $q.dark.isActive
+                      ? 'color: rgba(255,255,255,0.7);'
+                      : 'color: rgba(0, 0, 0, 0.6);'
                   "
                 >
                   <q-icon left name="local_fire_department" />
@@ -105,6 +114,47 @@
                   :min="0"
                   :max="maxCalories"
                   label-always
+                />
+              </div>
+            </q-btn-dropdown>
+            <q-btn-dropdown flat filled stretch no-caps>
+              <template v-slot:label>
+                <div
+                  class="row items-center no-wrap"
+                  v-bind:style="
+                    prepTime > 0
+                      ? ''
+                      : $q.dark.isActive
+                      ? 'color: rgba(255,255,255,0.7);'
+                      : 'color: rgba(0, 0, 0, 0.6);'
+                  "
+                >
+                  <q-icon left name="schedule" />
+                  <div class="text-center">
+                    Max Zubereitungszeit
+                    <template v-if="prepTime > 0"
+                      >({{ prepTime | formatDate }})</template
+                    >
+                  </div>
+                </div>
+              </template>
+              <div class="q-pa-md">
+                <!-- todo: get max prepTime -->
+                <q-slider
+                  style="min-width: 280px; margin-top: 10px"
+                  :value="prepTime"
+                  :min="0"
+                  :max="maxPrepTime"
+                  :step="300"
+                  label-always
+                  :label-value="prepTimeLabel | formatDate"
+                  @change="prepTimeChanged"
+                  @input="
+                    (val) => {
+                      prepTimeLabel = val;
+                    }
+                  "
+                  snap
                 />
               </div>
             </q-btn-dropdown>
@@ -144,14 +194,25 @@
       </div>
     </q-toolbar> -->
     </q-page-sticky>
-    <q-drawer v-if="isOverflowing" v-model="drawer" :width="300" overlay bordered>
+    <q-drawer
+      v-if="isOverflowing"
+      v-model="drawer"
+      :width="300"
+      overlay
+      bordered
+    >
       <q-scroll-area class="fit">
         <template>
           <div
             class=""
             v-for="(searchKey, index) in nonEmptyFilter"
             :key="searchKey"
-            style="display: flex; flex-direction: column; align-items: center; gap: 6px;"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 6px;
+            "
           >
             <template v-if="index > 0"><q-separator /></template>
             <template>
@@ -214,7 +275,11 @@
               <div
                 class="row items-center no-wrap full-width"
                 v-bind:style="
-                  standard > 0 ? '' : $q.dark.isActive ? 'color: rgba(255,255,255,0.7);':'color: rgba(0, 0, 0, 0.6);'
+                  standard > 0
+                    ? ''
+                    : $q.dark.isActive
+                    ? 'color: rgba(255,255,255,0.7);'
+                    : 'color: rgba(0, 0, 0, 0.6);'
                 "
               >
                 <q-icon left name="local_fire_department" />
@@ -234,6 +299,47 @@
               />
             </div>
           </q-btn-dropdown>
+                      <q-btn-dropdown flat filled stretch no-caps class="full-width">
+              <template v-slot:label>
+                <div
+                  class="row items-center no-wrap full-width"
+                  v-bind:style="
+                    prepTime > 0
+                      ? ''
+                      : $q.dark.isActive
+                      ? 'color: rgba(255,255,255,0.7);'
+                      : 'color: rgba(0, 0, 0, 0.6);'
+                  "
+                >
+                  <q-icon left name="schedule" />
+                  <div class="text-center">
+                    Max Zubereitungszeit
+                    <template v-if="prepTime > 0"
+                      >({{ prepTime | formatDate }})</template
+                    >
+                  </div>
+                </div>
+              </template>
+              <div class="q-pa-md">
+                <!-- todo: get max prepTime -->
+                <q-slider
+                  style="min-width: 280px; margin-top: 10px"
+                  :value="prepTime"
+                  :min="0"
+                  :max="maxPrepTime"
+                  :step="300"
+                  label-always
+                  :label-value="prepTimeLabel | formatDate"
+                  @change="prepTimeChanged"
+                  @input="
+                    (val) => {
+                      prepTimeLabel = val;
+                    }
+                  "
+                  snap
+                />
+              </div>
+            </q-btn-dropdown>
         </template>
 
         <!-- <q-list>
@@ -308,6 +414,22 @@ export default {
     },
   },
   filters: {
+    formatDate(seconds) {
+      let formatedDate = "";
+      var h = Math.floor(seconds / 3600);
+      if (h > 0) {
+        formatedDate += h + " Std ";
+      }
+      var m = Math.floor((seconds % 3600) / 60);
+      if (m > 0) {
+        formatedDate += m + " Min";
+      }
+      if (formatedDate.length == 0) {
+        formatedDate = "0";
+      }
+      return formatedDate;
+      //return new Date(seconds * 1000).toISOString().substr(11, 8);
+    },
     canonicalName(name) {
       switch (name) {
         case "ingredient":
@@ -357,6 +479,10 @@ export default {
         default:
           return name;
       }
+    },
+    prepTimeChanged(event) {
+      this.prepTime = event;
+      this.addToSearch("prepTime", this.prepTime, true);
     },
     caloriesChanged(event) {
       this.standard = event;
@@ -408,49 +534,14 @@ export default {
       mounted: false,
       dataCopy: {},
       maxCalories: 1000,
+      maxPrepTime: 10800,
       model: [],
       standard: 0,
+      prepTime: 0,
+      prepTimeLabel: 0,
       options: ["Einfach", "Medium", "Schwer"],
       isOverflowing: false,
       drawer: false,
-      menuList: [
-        {
-          icon: "inbox",
-          label: "Inbox",
-          separator: true,
-        },
-        {
-          icon: "send",
-          label: "Outbox",
-          separator: false,
-        },
-        {
-          icon: "delete",
-          label: "Trash",
-          separator: false,
-        },
-        {
-          icon: "error",
-          label: "Spam",
-          separator: true,
-        },
-        {
-          icon: "settings",
-          label: "Settings",
-          separator: false,
-        },
-        {
-          icon: "feedback",
-          label: "Send Feedback",
-          separator: false,
-        },
-        {
-          icon: "help",
-          iconColor: "primary",
-          label: "Help",
-          separator: false,
-        },
-      ],
     };
   },
   watch: {

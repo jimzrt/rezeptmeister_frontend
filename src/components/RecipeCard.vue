@@ -1,107 +1,103 @@
 <template>
-       <Flipped
-          :flip-id="index + '_1'"
-          scale
-          translate
-        >
-  <div>
-    <q-card
-      class="my-card"
-      v-bind:style="expanded ? '' : 'height: 750px;overflow: hidden;'"
-    >
-      <Flipped :flip-id="index + ''" scale translate>
-        <q-img
-          :src="recipe | backendPictureUrl"
-          @click="openRecipe()"
-          :ratio="1"
-        >
-          <div class="absolute-top text-subtitle2">
-            {{ recipe.difficulty | germanDifficulty }}
-          </div>
-        </q-img>
-      </Flipped>
-
-      <q-card-section>
-        <div class="row no-wrap items-center">
-          <Flipped :flip-id="index + '_2'" scale translate>
-            <div class="text-h6 my-font col ellipsis">
-              {{ recipe.title }}
-            </div>
-          </Flipped>
-          <div
-            class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
+  <Flipped :flip-id="index + '_1'" scale translate>
+    <div>
+      <q-card
+        class="my-card"
+        v-bind:style="expanded ? '' : 'height: 750px;overflow: hidden;'"
+      >
+        <Flipped :flip-id="index + ''" scale translate>
+          <q-img
+            :src="recipe | backendPictureUrl"
+            @click="openRecipe()"
+            :ratio="1"
           >
-            <!-- <q-icon name="place" /> -->
-            <div>{{ recipe.calories }} kcal</div>
-            <div>
-              {{ recipe.preperationTimeInSeconds | formatDate }}
+            <div class="absolute-top text-subtitle2">
+              {{ recipe.difficulty | germanDifficulty }}
+            </div>
+          </q-img>
+        </Flipped>
+
+        <q-card-section>
+          <div class="row no-wrap items-center">
+            <Flipped :flip-id="index + '_2'" scale translate>
+              <div class="text-h6 my-font col ellipsis">
+                {{ recipe.title }}
+              </div>
+            </Flipped>
+            <div
+              class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
+            >
+              <!-- <q-icon name="place" /> -->
+              <div>{{ recipe.calories }} kcal</div>
+              <div>
+                {{ recipe.preperationTimeInSeconds | formatDate }}
+              </div>
             </div>
           </div>
-        </div>
-        <!-- <div class="text-subtitle2">by Edeka</div> -->
-      </q-card-section>
-      <q-separator />
-      <q-card-section horizontal>
-        <q-card-section
-          class="text-body2"
-          style="
-            align-items: center;
-            display: flex;
-            text-align: center;
-            text-align: justify;
-          "
-        >
-          {{ recipe.description }}
+          <!-- <div class="text-subtitle2">by Edeka</div> -->
         </q-card-section>
-
-        <q-separator style="flex-shrink: 0" vertical />
-
-        <q-card-section
-          class="col-4 text-caption"
-          style="text-align: center"
-          v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
-        >
-          <q-chip
-            dense
-            square
-            v-for="tag in recipe.tags"
-            clickable
-            class="clipped"
-            @click="addToSearch('tag', tag)"
-            :key="tag.id"
-            color="secondary"
-            text-color="white"
+        <q-separator />
+        <q-card-section horizontal>
+          <q-card-section
+            class="text-body2"
+            style="
+              align-items: center;
+              display: flex;
+              text-align: center;
+              text-align: justify;
+            "
           >
-            {{ tag.name }}
-          </q-chip>
-        </q-card-section>
-      </q-card-section>
-      <q-separator />
-      <q-card-section horizontal>
-        <q-card-section class="text-body2">
-          <q-chip
-            dense
-            square
-            v-for="ingredient in recipe.ingredients"
-            :key="ingredient.id"
-            clickable
-            @click="addToSearch('ingredient', ingredient)"
-            color="primary"
-            text-color="white"
+            {{ recipe.description }}
+          </q-card-section>
+
+          <q-separator style="flex-shrink: 0" vertical />
+
+          <q-card-section
+            class="col-4 text-caption"
+            style="text-align: center"
+            v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
           >
-            {{ ingredient.name }}
-          </q-chip>
-          <!-- <span v-html="styleIngredients(recipe.ingredients)"></span> -->
+            <q-chip
+              dense
+              square
+              v-for="tag in recipe.tags"
+              clickable
+              class="clipped"
+              @click="addToSearch('tag', tag)"
+              :key="tag.id"
+              color="secondary"
+              text-color="white"
+            >
+              {{ tag.name }}
+            </q-chip>
+          </q-card-section>
         </q-card-section>
-      </q-card-section>
-    </q-card>
-    <q-btn
-      color="info"
-      class="full-width expand-button"
-      :icon="expanded ? 'expand_less' : 'expand_more'"
-      @click="expanded = !expanded"
-    />
-  </div>
+        <q-separator />
+        <q-card-section horizontal>
+          <q-card-section class="text-body2">
+            <q-chip
+              dense
+              square
+              v-for="ingredient in recipe.ingredients"
+              :key="ingredient.id"
+              clickable
+              @click="addToSearch('ingredient', ingredient)"
+              color="primary"
+              text-color="white"
+            >
+              {{ ingredient.name }}
+            </q-chip>
+            <!-- <span v-html="styleIngredients(recipe.ingredients)"></span> -->
+          </q-card-section>
+        </q-card-section>
+      </q-card>
+      <q-btn
+        color="info"
+        class="full-width expand-button"
+        :icon="expanded ? 'expand_less' : 'expand_more'"
+        @click="expanded = !expanded"
+      />
+    </div>
   </Flipped>
 </template>
 <script>
@@ -118,7 +114,17 @@ export default {
       return process.env.API + "/images/recipe/" + recipe.seoTitle + "_big.jpg"; //url.split("/").slice(3).join("/");
     },
     formatDate(seconds) {
-      return new Date(seconds * 1000).toISOString().substr(11, 8);
+      let formatedDate = "";
+      var h = Math.floor(seconds / 3600);
+      if(h > 0){
+          formatedDate += (h + " Std ");
+      }
+      var m = Math.floor(seconds % 3600 / 60);
+      if(m > 0){
+          formatedDate += (m + " Min");
+      }
+      return formatedDate;
+      //return new Date(seconds * 1000).toISOString().substr(11, 8);
     },
     germanDifficulty(name) {
       switch (name) {
