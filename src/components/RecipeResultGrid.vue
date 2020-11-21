@@ -29,6 +29,8 @@
             style="min-height: 768px; width: 400px"
             v-for="(recipe, index) in currentRecipes"
             :key="recipe.id"
+            transition="fade"
+            :disable="intersectionDisabled"
           >
             <RecipeCard
               :recipe="recipe"
@@ -129,6 +131,17 @@ export default {
       }
     },
   },
+  activated () {
+    console.log('About has been activated')
+
+        this.intersectionDisabled = false;
+
+},
+deactivated () {
+    console.log('About has been deactivated')
+        this.intersectionDisabled=true;
+
+},
   methods: {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
@@ -201,11 +214,6 @@ export default {
       this.currentPage = value;
       this.loadData();
     },
-    log(key, item) {
-      this.dataCopy = _.clone(this.value);
-      _.remove(this.dataCopy[key], item);
-      this.updateData();
-    },
     updateData() {
       this.$emit("input", this.dataCopy);
     },
@@ -219,9 +227,9 @@ export default {
       window.scrollTo(0, 0);
       this.currentPlaceholders = 0;
       await this.$nextTick();
-      // this.$q.loading.show({
-      //   delay: 0, // ms
-      // });
+      this.$q.loading.show({
+        delay: 0, // ms
+      });
       console.log("construct searchFilter from", this.value);
 
       /**
@@ -299,7 +307,7 @@ export default {
           });
         })
         .then(() => {
-          //this.$q.loading.hide();
+          this.$q.loading.hide();
           this.loading = false;
           this.currentPlaceholders = 0;
         });
@@ -308,6 +316,7 @@ export default {
   },
   data() {
     return {
+      intersectionDisabled: false,
       loading: false,
       api: process.env.API,
       dataCopy: {},

@@ -19,7 +19,7 @@ module.exports = function ( ctx ) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
-      
+      'intersection-observer',
       'axios',
     ],
 
@@ -48,7 +48,7 @@ module.exports = function ( ctx ) {
 
 
       env: {
-        API: ctx.dev ? 'http://localhost:54321' : ''
+        API: ctx.dev ? 'http://192.168.178.37:54321' : ''
       }, 
       // transpile: false,
 
