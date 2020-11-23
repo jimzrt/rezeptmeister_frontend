@@ -17,28 +17,28 @@
         />
       </div>
     </q-banner>
-    <transition name="list">
-      <div>
-        <div
-          class="q-pa-l row items-center flex-center q-gutter-xl"
-          style="margin-bottom: 80px; padding-top: 40px"
-          v-if="currentRecipes.length > 0"
+    <!-- <transition name="list"> -->
+    <div>
+      <div
+        class="q-pa-l row items-center flex-center q-gutter-xl"
+        style="margin-bottom: 30px; padding-top: 40px"
+        v-if="currentRecipes.length > 0"
+      >
+        <!-- v-show="!loading" -->
+        <q-intersection
+          style="min-height: 768px; width: 400px"
+          v-for="(recipe, index) in currentRecipes"
+          :key="recipe.id"
+          transition="fade"
+          :disable="intersectionDisabled"
         >
-          <!-- v-show="!loading" -->
-          <q-intersection
-            style="min-height: 768px; width: 400px"
-            v-for="(recipe, index) in currentRecipes"
-            :key="recipe.id"
-            transition="fade"
-            :disable="intersectionDisabled"
-          >
-            <RecipeCard
-              :recipe="recipe"
-              :index="index"
-              @onAddToSearch="addToSearch"
-            />
-          </q-intersection>
-          <!-- <div v-for="i in currentPlaceholders" :key="i+ '_ph'">
+          <RecipeCard
+            :recipe="recipe"
+            :index="index"
+            @onAddToSearch="addToSearch"
+          />
+        </q-intersection>
+        <!-- <div v-for="i in currentPlaceholders" :key="i+ '_ph'">
             <q-card style="width: 400px; height: 785px">
               <q-item style="height: 54px">
                 <q-item-section>
@@ -59,33 +59,33 @@
               <q-skeleton type="text" v-for="i in 10" :key="i + '_sk'" />
             </q-card>
           </div> -->
-        </div>
-
-        <div
-          v-else-if="!searchFilterEmpty && !loading"
-          style="display: flex; align-items: center; justify-content: center"
-          class="absolute-center"
-        >
-          <h4>Keine Rezepte gefunden :(</h4>
-        </div>
       </div>
-    </transition>
+
+      <div
+        v-else-if="!searchFilterEmpty && !loading"
+        style="display: flex; align-items: center; justify-content: center"
+        class="absolute-center"
+      >
+        <h4>Keine Rezepte gefunden :(</h4>
+      </div>
+    </div>
+    <!-- </transition> -->
 
     <template v-if="currentRecipes.length > 0">
-      <q-page-sticky expand position="bottom" class="pagination-bar">
-        <div class="q-pa-md flex flex-center">
-          <q-pagination
-            :direction-links="true"
-            :value="currentPage"
-            :max="totalPages"
-            :max-pages="6"
-            :boundary-numbers="true"
-            @input="changePage"
-            color="accent"
-          >
-          </q-pagination>
-        </div>
-      </q-page-sticky>
+      <!-- <q-page-sticky expand position="bottom" class="pagination-bar"> -->
+      <div class="q-pa-md flex flex-center">
+        <q-pagination
+          :direction-links="true"
+          :value="currentPage"
+          :max="totalPages"
+          :max-pages="6"
+          :boundary-numbers="true"
+          @input="changePage"
+          color="accent"
+        >
+        </q-pagination>
+      </div>
+      <!-- </q-page-sticky> -->
     </template>
   </div>
 </template>
@@ -131,17 +131,15 @@ export default {
       }
     },
   },
-  activated () {
-    console.log('About has been activated')
+  activated() {
+    console.log("About has been activated");
 
-        this.intersectionDisabled = false;
-
-},
-deactivated () {
-    console.log('About has been deactivated')
-        this.intersectionDisabled=true;
-
-},
+    this.intersectionDisabled = false;
+  },
+  deactivated() {
+    console.log("About has been deactivated");
+    this.intersectionDisabled = true;
+  },
   methods: {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
