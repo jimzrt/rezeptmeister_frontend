@@ -1,7 +1,11 @@
 <template>
-  <div class="searchResult" style="overflow: auto; max-height: 90vh">
+  <div
+    class="searchResult"
+    style="overflow: auto; max-height: 90vh"
+    v-if="search != ''"
+  >
     <!-- <q-scroll-area  style="height: 500px;"> -->
-    <template v-if="this.search == ''">
+    <!-- <template v-if="this.search == ''">
           <q-item
             style="max-width: 400px"
             v-for="index in 6"
@@ -20,9 +24,9 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-    </template>
+    </template> -->
     <template
-      v-else-if="
+      v-if="
         !loading &&
         ingredients.length == 0 &&
         tags.length == 0 &&
@@ -34,7 +38,7 @@
           <div class="row">
             <div class="col-8">
               <h6 class="resultHeading">
-                <span>Die Eingabe "{{search}}" liefert kein Ergebnis!</span>
+                <span>Die Eingabe "{{ search }}" liefert kein Ergebnis!</span>
               </h6>
             </div>
           </div>
@@ -110,7 +114,7 @@
                   id: search,
                   name: '*' + search + '*',
                   exclude: false,
-                  wildcard: true
+                  wildcard: true,
                 })
               "
             >
