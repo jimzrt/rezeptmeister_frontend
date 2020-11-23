@@ -47,26 +47,12 @@
                   <q-toggle
                     :value="!('exclude' in item) || !item['exclude']"
                     @input="addToSearch(searchKey, item, false, true)"
-                    checked-icon="fas fa-equals"
+                    checked-icon="add"
                     color="white"
                     icon-color="black"
-                    unchecked-icon="fas fa-not-equal"
+                    unchecked-icon="remove"
                   />
                 </q-chip>
-                <!-- <template v-if="value['exclude']">
-                  <q-chip
-                    square
-                    removable
-                    clickable
-                    v-for="item in value['exclude'][searchKey]"
-                    :key="item.id"
-                    @click="addToSearch(searchKey, item, false, true)"
-                    @remove="removeFromSearch(searchKey, item)"
-                    color="red"
-                    text-color="white"
-                    >{{ item.name }}</q-chip
-                  >
-                </template> -->
               </template>
             </div>
             <q-select
@@ -158,11 +144,7 @@
                   label-always
                   :label-value="totalTimeLabel | formatDate"
                   @change="totalTimeChanged"
-                  @input="
-                    (val) => {
-                      totalTimeLabel = val;
-                    }
-                  "
+                  @input="(val) => (totalTimeLabel = val)"
                   snap
                 />
               </div>
@@ -178,30 +160,6 @@
           />
         </div>
       </q-toolbar>
-
-      <!-- 
-    <q-toolbar class="YL__sticky bg-white">
-      <div
-        class="q-gutter-xs"
-        v-for="(searchKey,index) in nonEmptyFilter"
-        :key="searchKey"
-      >
-      <div>
-      <template v-if="index>0"><q-separator size="16px" spaced inset vertical />123</template>
-        {{ searchKey | canonicalName }}:
-        <q-chip
-          removable
-          span
-          v-for="item in value[searchKey]"
-          :key="item.id"
-          @remove="log(searchKey, item)"
-          color="primary"
-          text-color="white"
-          icon="cake"
-          >{{ item.name }}</q-chip
-        ></div>
-      </div>
-    </q-toolbar> -->
     </q-page-sticky>
     <q-drawer
       v-if="isOverflowing"
@@ -443,14 +401,10 @@ export default {
       switch (name) {
         case "ingredient":
           return "Zutaten";
-        case "ingredient_special":
-          return "Zutaten*";
         case "recipe":
           return "Rezepte";
         case "tag":
           return "Kategorien";
-        case "tag_special":
-          return "Kategorien*";
         default:
           return name;
       }

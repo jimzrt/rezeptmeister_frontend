@@ -141,9 +141,7 @@ export default {
     this.intersectionDisabled = true;
   },
   methods: {
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
+
     // recipeTags(recipe) {
     //   if (this.expandedCards.has(recipe.id)) {
     //     return recipe.tags;
