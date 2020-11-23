@@ -36,15 +36,24 @@
                   @click="addToSearch(searchKey, item, false, true)"
                   @remove="removeFromSearch(searchKey, item)"
                   :color="
-                    searchKey == 'ingredient' ||
-                    searchKey == 'ingredient_special'
+                    'exclude' in item && item['exclude']
+                      ? 'red'
+                      : searchKey == 'ingredient'
                       ? 'primary'
                       : 'secondary'
                   "
                   text-color="white"
-                  >{{ item.name }}</q-chip
-                >
-                <template v-if="value['exclude']">
+                  >{{ item.name }}
+                  <q-toggle
+                    :value="!('exclude' in item) || !item['exclude']"
+                    @input="addToSearch(searchKey, item, false, true)"
+                    checked-icon="fas fa-equals"
+                    color="white"
+                    icon-color="black"
+                    unchecked-icon="fas fa-not-equal"
+                  />
+                </q-chip>
+                <!-- <template v-if="value['exclude']">
                   <q-chip
                     square
                     removable
@@ -57,7 +66,7 @@
                     text-color="white"
                     >{{ item.name }}</q-chip
                   >
-                </template>
+                </template> -->
               </template>
             </div>
             <q-select
@@ -299,47 +308,47 @@
               />
             </div>
           </q-btn-dropdown>
-                      <q-btn-dropdown flat filled stretch no-caps class="full-width">
-              <template v-slot:label>
-                <div
-                  class="row items-center no-wrap full-width"
-                  v-bind:style="
-                    totalTime > 0
-                      ? ''
-                      : $q.dark.isActive
-                      ? 'color: rgba(255,255,255,0.7);'
-                      : 'color: rgba(0, 0, 0, 0.6);'
-                  "
-                >
-                  <q-icon left name="schedule" />
-                  <div class="text-center">
-                    Max Zubereitungszeit
-                    <template v-if="totalTime > 0"
-                      >({{ totalTime | formatDate }})</template
-                    >
-                  </div>
+          <q-btn-dropdown flat filled stretch no-caps class="full-width">
+            <template v-slot:label>
+              <div
+                class="row items-center no-wrap full-width"
+                v-bind:style="
+                  totalTime > 0
+                    ? ''
+                    : $q.dark.isActive
+                    ? 'color: rgba(255,255,255,0.7);'
+                    : 'color: rgba(0, 0, 0, 0.6);'
+                "
+              >
+                <q-icon left name="schedule" />
+                <div class="text-center">
+                  Max Zubereitungszeit
+                  <template v-if="totalTime > 0"
+                    >({{ totalTime | formatDate }})</template
+                  >
                 </div>
-              </template>
-              <div class="q-pa-md">
-                <!-- todo: get max totalTime -->
-                <q-slider
-                  style="min-width: 280px; margin-top: 10px"
-                  :value="totalTime"
-                  :min="0"
-                  :max="maxtotalTime"
-                  :step="300"
-                  label-always
-                  :label-value="totalTimeLabel | formatDate"
-                  @change="totalTimeChanged"
-                  @input="
-                    (val) => {
-                      totalTimeLabel = val;
-                    }
-                  "
-                  snap
-                />
               </div>
-            </q-btn-dropdown>
+            </template>
+            <div class="q-pa-md">
+              <!-- todo: get max totalTime -->
+              <q-slider
+                style="min-width: 280px; margin-top: 10px"
+                :value="totalTime"
+                :min="0"
+                :max="maxtotalTime"
+                :step="300"
+                label-always
+                :label-value="totalTimeLabel | formatDate"
+                @change="totalTimeChanged"
+                @input="
+                  (val) => {
+                    totalTimeLabel = val;
+                  }
+                "
+                snap
+              />
+            </div>
+          </q-btn-dropdown>
         </template>
 
         <!-- <q-list>
@@ -542,6 +551,7 @@ export default {
       options: ["Einfach", "Medium", "Schwer"],
       isOverflowing: false,
       drawer: false,
+      third: true,
     };
   },
   watch: {

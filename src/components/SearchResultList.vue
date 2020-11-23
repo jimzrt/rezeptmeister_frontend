@@ -106,9 +106,11 @@
               :active="selectedIndex == 0"
               active-class="bg-blue-1"
               @click="
-                addToSearch('ingredient_special', {
+                addToSearch('ingredient', {
                   id: search,
                   name: '*' + search + '*',
+                  exclude: false,
+                  wildcard: true
                 })
               "
             >

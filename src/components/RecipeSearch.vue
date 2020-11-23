@@ -272,21 +272,35 @@ export default {
       }
 
       if (exclude) {
-        if (!("exclude" in this.searchFilter)) {
-          this.$set(this.searchFilter, "exclude", {});
-        }
-        if (!(type in this.searchFilter["exclude"])) {
-          this.$set(this.searchFilter["exclude"], type, []);
-        } else {
-          if (_.some(this.searchFilter["exclude"][type], value)) {
-            this.removeFromSearch(type, value);
-            this.addToSearch(type, value);
+        // if (!("exclude" in this.searchFilter)) {
+        //   this.$set(this.searchFilter, "exclude", {});
+        // }
+        if (!(type in this.searchFilter)) {
+          return;
+          //this.$set(this.searchFilter, type, []);
+        } 
+        
+          const index = this.searchFilter[type].findIndex(val => val.id === value.id);
+          if(index == -1){
             return;
           }
-        }
-        this.removeFromSearch(type, value);
-        this.searchFilter["exclude"][type].push(value);
-        return;
+          if('exclude' in this.searchFilter[type][index]){
+            value['exclude'] = !value['exclude'];
+            this.$set(this.searchFilter[type], index, value)
+          } else {
+            this.$set(this.searchFilter[type], index, {...value, exclude: true})
+          }
+
+          return;
+          // _.find(this.searchFilter[type], value){
+          //   this.removeFromSearch(type, value);
+          //   this.addToSearch(type, value);
+          //   return;
+          // }
+        
+        // this.removeFromSearch(type, value);
+        // this.searchFilter["exclude"][type].push(value);
+        // return;
       }
 
       if (!(type in this.searchFilter)) {

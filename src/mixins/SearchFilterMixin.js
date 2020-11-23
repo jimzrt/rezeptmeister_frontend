@@ -8,7 +8,11 @@ export default {
       }
       if (_.isPlainObject(element)) {
         if ("id" in element) {
-          return element.id;
+          let ret = {}
+          ret["id"] = element.id;
+          ret["exclude"] = "exclude" in element ? element["exclude"] : false;
+          ret["wildcard"] = "wildcard" in element ? element["wildcard"] : false;
+          return ret;
         }
         let ret = {};
         Object.entries(element).forEach(
