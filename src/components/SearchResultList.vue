@@ -35,104 +35,104 @@
 
         <template v-if="!loading">
           <div style="max-height:400px;overflow-y: scroll">
-          <template v-if="ingredients.length > 0">
-            <q-item
-              clickable
-              v-ripple
-              v-for="(ingredient, index) in ingredients"
-              :key="ingredient.slug"
-              class="list-complete-item"
-              :active="selectedIndex == index"
-              active-class="bg-blue-1"
-              @click="addToSearch('ingredient', ingredient)"
-            >
-              <q-item-section avatar>
-                <q-avatar circle size="40px">
-                  <q-img :src="api + ingredient.pictureUrl" />
-                </q-avatar>
-              </q-item-section>
-              <q-item-section no-wrap>
-                <div class="row">
-                  <div class="col-8">
-                    <h6 class="resultHeading">
-                      <span v-html="makeBold(ingredient.name)"></span>
-                    </h6>
+            <template v-if="ingredients.length > 0">
+              <q-item
+                clickable
+                v-ripple
+                v-for="(ingredient, index) in ingredients"
+                :key="ingredient.slug"
+                class="list-complete-item"
+                :active="selectedIndex == index"
+                active-class="bg-blue-1"
+                @click="addToSearch('ingredient', ingredient)"
+              >
+                <q-item-section avatar>
+                  <q-avatar circle size="40px">
+                    <q-img :src="api + ingredient.pictureUrl" />
+                  </q-avatar>
+                </q-item-section>
+                <q-item-section no-wrap>
+                  <div class="row">
+                    <div class="col-8">
+                      <h6 class="resultHeading">
+                        <span v-html="makeBold(ingredient.name)"></span>
+                      </h6>
+                    </div>
                   </div>
-                </div>
-              </q-item-section>
+                </q-item-section>
 
-              <q-item-section side>
-                <q-spinner-dots
-                  color="primary"
-                  size="40px"
-                  v-if="ingredient.recipeCount == undefined"
-                />
-                <q-chip v-else>
-                  <q-avatar
+                <q-item-section side>
+                  <q-spinner-dots
                     color="primary"
-                    text-color="white"
-                    font-size="14px"
-                    >{{ ingredient.recipeCount }}</q-avatar
-                  >
-                  Rezepte
-                </q-chip>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              v-ripple
-              class="list-complete-item"
-              :active="selectedIndex == 0"
-              active-class="bg-blue-1"
-              @click="
-                addToSearch('ingredient', {
-                  id: search,
-                  name: '*' + search + '*',
-                  exclude: false,
-                  wildcard: true
-                })
-              "
-            >
-              <q-item-section avatar>
-                <q-avatar circle size="40px">
-                  <q-img :src="api + '/images/wildcard.png'" />
-                </q-avatar>
-              </q-item-section>
-              <q-item-section no-wrap>
-                <div class="row">
-                  <div class="col-8">
-                    <h6 class="resultHeading">
-                      <span
-                        v-html="
-                          'Alle Zutaten die \'' +
-                            makeBold(this.search) +
-                            '\' enthalten'
-                        "
-                      ></span>
-                    </h6>
+                    size="40px"
+                    v-if="ingredient.recipeCount == undefined"
+                  />
+                  <q-chip v-else>
+                    <q-avatar
+                      color="primary"
+                      text-color="white"
+                      font-size="14px"
+                      >{{ ingredient.recipeCount }}</q-avatar
+                    >
+                    Rezepte
+                  </q-chip>
+                </q-item-section>
+              </q-item>
+              <q-item
+                clickable
+                v-ripple
+                class="list-complete-item"
+                :active="selectedIndex == 0"
+                active-class="bg-blue-1"
+                @click="
+                  addToSearch('ingredient', {
+                    id: search,
+                    name: '*' + search + '*',
+                    exclude: false,
+                    wildcard: true
+                  })
+                "
+              >
+                <q-item-section avatar>
+                  <q-avatar circle size="40px">
+                    <q-img :src="api + '/images/wildcard.png'" />
+                  </q-avatar>
+                </q-item-section>
+                <q-item-section no-wrap>
+                  <div class="row">
+                    <div class="col-8">
+                      <h6 class="resultHeading">
+                        <span
+                          v-html="
+                            'Alle Zutaten die \'' +
+                              makeBold(this.search) +
+                              '\' enthalten'
+                          "
+                        ></span>
+                      </h6>
+                    </div>
                   </div>
-                </div>
-              </q-item-section>
+                </q-item-section>
 
-              <!-- TODO: count with added filter -->
-              <q-item-section side>
-                <q-spinner-dots
-                  color="primary"
-                  size="40px"
-                  v-if="specialRecipeCount == -1"
-                />
-                <q-chip v-else>
-                  <q-avatar
+                <!-- TODO: count with added filter -->
+                <q-item-section side>
+                  <q-spinner-dots
                     color="primary"
-                    text-color="white"
-                    font-size="14px"
-                    >{{ specialRecipeCount }}</q-avatar
-                  >
-                  Rezepte
-                </q-chip>
-              </q-item-section>
-            </q-item>
-          </template>
+                    size="40px"
+                    v-if="specialRecipeCount == -1"
+                  />
+                  <q-chip v-else>
+                    <q-avatar
+                      color="primary"
+                      text-color="white"
+                      font-size="14px"
+                      >{{ specialRecipeCount }}</q-avatar
+                    >
+                    Rezepte
+                  </q-chip>
+                </q-item-section>
+              </q-item>
+            </template>
           </div>
         </template>
         <template v-else>
@@ -335,8 +335,8 @@ export default {
 
       let ingredientRequestIdx = this.promises.length;
       this.promises[ingredientRequestIdx] = this.$axios
-        .post("/ingredient/"+name, this.flatFilter,{
-          cancelToken: this.cancelToken.token,
+        .post("/ingredient/" + name, this.flatFilter, {
+          cancelToken: this.cancelToken.token
         })
         .then(response => {
           let innerPromises = [];

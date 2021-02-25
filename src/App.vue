@@ -13,7 +13,7 @@ export default {
 </script>
 <style>
 body {
-  background-color: #424242;
+  background-color: #b9b9b9;
 }
 </style>
 <style scoped>
