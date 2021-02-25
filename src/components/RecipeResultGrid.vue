@@ -266,12 +266,11 @@ export default {
       // this.$router.push({ path: currentPath, query: searchFilter });
 
       //console.log(searchFilter);
-      // this.currentRecipes = [];
-
+      this.currentRecipes = [];
       this.loadPromise = this.$axios
         .post("/recipe/search", searchFilter)
         .then(async response => {
-          this.currentRecipes = [];
+          //this.currentRecipes = [];
 
           this.totalElements = response.data.totalElements;
           this.totalPages = response.data.totalPages;

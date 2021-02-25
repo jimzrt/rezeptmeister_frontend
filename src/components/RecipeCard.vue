@@ -214,7 +214,9 @@ export default {
 .material-icons {
   color: white;
 }
-
+.shadowy {
+  width: 100%;
+}
 .shadowy:before {
   content: "";
   box-shadow: 0px -10px 20px #141414 inset;
