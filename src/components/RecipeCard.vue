@@ -211,15 +211,19 @@ export default {
   opacity: 0.5;
   overflow: hidden;
 }
-.material-icons {
+
+.body--dark .expand-button .material-icons {
   color: white;
+}
+.body--light .expand-button .material-icons {
+  color: #404040;
 }
 .shadowy {
   width: 100%;
 }
 .shadowy:before {
   content: "";
-  box-shadow: 0px -10px 20px #141414 inset;
+  box-shadow: 0px -10px 20px var(--q-color-background) inset;
   display: block;
   position: absolute;
   top: 0;

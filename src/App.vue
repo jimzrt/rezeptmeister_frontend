@@ -11,6 +11,11 @@ export default {
   // }
 };
 </script>
+<style>
+body {
+  background-color: #424242;
+}
+</style>
 <style scoped>
 /* Enter and leave animations can use different */
 /* durations and timing functions.              */

@@ -338,6 +338,7 @@ export default {
           !d.startsWith("Probieren Sie auch") &&
           !d.startsWith("Lust auf") &&
           !d.startsWith("Möchten Sie noch") &&
+          !d.startsWith("Lecker") &&
           !d.includes("Entdecken Sie")
       );
     }
@@ -488,7 +489,7 @@ export default {
     display: inline;
   }
   .fade-card {
-    animation: fade 0.4s ease 250ms 1 both;
+    animation: fade 250ms 1 both;
     opacity: 0;
     @keyframes fade {
       from {
