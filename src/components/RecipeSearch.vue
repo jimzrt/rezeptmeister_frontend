@@ -1,19 +1,9 @@
 <template>
-  <!-- bg-grey-1 -->
   <q-layout view="hHh Lpr lff" class="">
     <q-ajax-bar position="bottom" color="primary" size="10px" />
     <q-page-container>
       <q-header class="text-grey-1 q-py-xs edekaBar" height-hint="65">
         <q-toolbar>
-          <!-- <q-btn
-            flat
-            dense
-            round
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            aria-label="Menu"
-            icon="menu"
-          /> -->
-
           <q-btn flat no-caps no-wrap padding="0px 5px 0px 10px">
             <img :src="api + '/images/logo.png'" height="50px" />
             <q-toolbar-title
@@ -37,8 +27,6 @@
             class="toolio"
             v-bind:class="{ inactive: !searchFocus && searchFilterEmpty }"
           >
-            <!-- v-bind:style="(searchFocus || !searchFilterEmpty) ? 'position:relative': 'position:absolute' " -->
-
             <q-input
               ref="searchBar"
               class="YL__toolbar-input"
@@ -83,15 +71,6 @@
             </q-input>
           </div>
 
-          <!-- <q-space />
-
-          <div class="q-gutter-sm row items-center no-wrap">
-            <q-btn round dense flat icon="favorite">
-              <q-badge color="red" text-color="white" floating> 2 </q-badge>
-              <q-tooltip>Merkliste</q-tooltip>
-            </q-btn>
-          </div> -->
-
           <template v-if="$q.screen.gt.sm">
             <q-space />
 
@@ -104,97 +83,7 @@
         </q-toolbar>
       </q-header>
 
-      <!-- <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-2"
-      :width="240"
-      persistent
-    >
-      <q-scroll-area class="fit">
-        <q-list padding>
-          <q-item v-for="link in links1" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-
-          <q-item v-for="link in links2" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-mt-md q-mb-xs" />
-
-          <q-item-label header class="text-weight-bold text-uppercase">
-            More from Youtube
-          </q-item-label>
-
-          <q-item v-for="link in links3" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-my-md" />
-
-          <q-item v-for="link in links4" :key="link.text" v-ripple clickable>
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
-
-          <q-separator class="q-mt-md q-mb-lg" />
-
-          <div class="q-px-md text-grey-9">
-            <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-              <a
-                v-for="button in buttons1"
-                :key="button.text"
-                class="YL__drawer-footer-link"
-                href="javascript:void(0)"
-              >
-                {{ button.text }}
-              </a>
-            </div>
-          </div>
-          <div class="q-py-md q-px-md text-grey-9">
-            <div class="row items-center q-gutter-x-sm q-gutter-y-xs">
-              <a
-                v-for="button in buttons2"
-                :key="button.text"
-                class="YL__drawer-footer-link"
-                href="javascript:void(0)"
-              >
-                {{ button.text }}
-              </a>
-            </div>
-          </div>
-        </q-list>
-      </q-scroll-area>
-    </q-drawer> -->
-
-      <!-- active filters -->
-
       <RecipeResultGrid v-model="searchFilter" @onAddToSearch="addToSearch" />
-      <!-- v-bind:style="{ 'margin-top': searchFilterEmpty ? '15px' : '80px' }" -->
-      <!-- <router-view /> -->
       <SearchFilterBar
         v-model="searchFilter"
         v-if="!searchFilterEmpty"
@@ -210,8 +99,6 @@
 import SearchResultList from "../components/SearchResultList.vue";
 import SearchFilterBar from "../components/SearchFilterBar.vue";
 import RecipeResultGrid from "../components/RecipeResultGrid.vue";
-
-import { some, isArray, every, includes } from "lodash";
 
 const stringOptions = ["Google", "Facebook", "Twitter", "Apple", "Oracle"];
 
@@ -234,11 +121,7 @@ export default {
       api: process.env.API
     };
   },
-  // watch: {
-  //   searchFilter: function (newVal, oldVal) {
-  //     console.log("value changed from " + oldVal + " to " + newVal);
-  //   },
-  // },
+
   created() {
     document.addEventListener("click", this.onClickAnywhere);
   },
@@ -262,7 +145,6 @@ export default {
   },
   methods: {
     addToSearch(type, value, single = false, exclude = false) {
-      console.log(exclude ? "exclude" : "add", type, value);
       this.searchInput = "";
 
       if (single) {
@@ -271,12 +153,8 @@ export default {
       }
 
       if (exclude) {
-        // if (!("exclude" in this.searchFilter)) {
-        //   this.$set(this.searchFilter, "exclude", {});
-        // }
         if (!(type in this.searchFilter)) {
           return;
-          //this.$set(this.searchFilter, type, []);
         }
 
         const index = this.searchFilter[type].findIndex(
@@ -296,40 +174,23 @@ export default {
         }
 
         return;
-        // _.find(this.searchFilter[type], value){
-        //   this.removeFromSearch(type, value);
-        //   this.addToSearch(type, value);
-        //   return;
-        // }
-
-        // this.removeFromSearch(type, value);
-        // this.searchFilter["exclude"][type].push(value);
-        // return;
       }
 
       if (!(type in this.searchFilter)) {
-        // make it a set
-        // this.searchFilter[type] = [];
         this.$set(this.searchFilter, type, []);
       } else {
         if (_.some(this.searchFilter[type], value)) {
           return;
         }
       }
-      console.log("VALUE", value);
       this.searchFilter[type].push(value);
-      //this.$set(this.searchFilter, type, this.searchFilter[type]);
-      //console.log(this.searchFilter);
     },
     removeFromSearch(type, value) {
-      console.log("remove", type, value);
-
       if (
         type in this.searchFilter &&
         (_.some(this.searchFilter[type], value) ||
           _.includes(this.searchFilter[type], value))
       ) {
-        console.log(value, "is to be removed!");
         this.searchFilter[type].splice(
           this.searchFilter[type].indexOf(value),
           1
@@ -339,33 +200,11 @@ export default {
         type in this.searchFilter["exclude"] &&
         _.some(this.searchFilter["exclude"][type], value)
       ) {
-        console.log(value, "is to be unremoved!");
         this.searchFilter["exclude"][type].splice(
           this.searchFilter["exclude"][type].indexOf(value),
           1
         );
       }
-
-      // this.searchInput = "";
-
-      // if(type == "recipe"){
-      //   //todo
-      //   return;
-      // }
-
-      // if (!(type in this.searchFilter)) {
-      //   // make it a set
-      //   // this.searchFilter[type] = [];
-      //   this.$set(this.searchFilter, type, []);
-      // } else {
-      //   if (_.some(this.searchFilter[type], value)) {
-      //     console("inside")
-      //     return;
-      //   }
-      // }
-      // this.searchFilter[type].push(value);
-      //this.$set(this.searchFilter, type, this.searchFilter[type]);
-      //console.log(this.searchFilter);
     },
     // todo: loosely couple trigger via prop instead of using refs
     selectNextSuggestion: function() {
@@ -379,10 +218,8 @@ export default {
       // check if clicked outside of search bar
       const el = this.$refs.searchBar.$el;
       if (el == event.target || el.contains(event.target)) {
-        //console.log("INSIDE");
         this.searchFocus = true;
       } else {
-        //console.log("OUTSIDE");
         this.searchFocus = false;
       }
     }

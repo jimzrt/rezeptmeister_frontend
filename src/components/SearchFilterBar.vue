@@ -312,25 +312,6 @@
             </div>
           </q-btn-dropdown>
         </template>
-
-        <!-- <q-list>
-          <template v-for="(menuItem, index) in menuList">
-            <q-item
-              :key="index"
-              clickable
-              :active="menuItem.label === 'Outbox'"
-              v-ripple
-            >
-              <q-item-section avatar>
-                <q-icon :name="menuItem.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ menuItem.label }}
-              </q-item-section>
-            </q-item>
-            <q-separator :key="'sep' + index" v-if="menuItem.separator" />
-          </template>
-        </q-list> -->
       </q-scroll-area>
     </q-drawer>
   </div>
@@ -359,14 +340,6 @@ export default {
     document.removeEventListener("click", this.onClickAnywhere);
   },
   computed: {
-    // checkOverflowing() {
-    //   if (!this.mounted) return false;
-    //   var element = this.$refs.searchFilterBar;
-    //   return (
-    //     element.offsetHeight < element.scrollHeight ||
-    //     element.offsetWidth < element.scrollWidth
-    //   );
-    // },
     nonEmptyFilter() {
       let a = Object.keys(this.value)
         .sort()
@@ -380,7 +353,6 @@ export default {
                 key in this.value["exclude"] &&
                 this.value["exclude"][key].length > 0))
         );
-      console.log(a);
       return a;
     }
   },
@@ -399,7 +371,6 @@ export default {
         formatedDate = "0";
       }
       return formatedDate;
-      //return new Date(seconds * 1000).toISOString().substr(11, 8);
     },
     canonicalName(name) {
       switch (name) {
@@ -416,7 +387,6 @@ export default {
   },
   methods: {
     onClickAnywhere(event) {
-      console.log("clickoo");
       // check if clicked outside of search bar
       if (!this.drawer) {
         return;
@@ -432,7 +402,6 @@ export default {
         if (!this.$refs.searchFilterBar) return;
         this.isOverflowing =
           this.$refs.searchFilterBar.offsetWidth > window.innerWidth;
-        console.log("overflow", this.isOverflowing);
       });
     },
     englishDifficulty(name) {
@@ -453,14 +422,11 @@ export default {
     },
     caloriesChanged(event) {
       this.standard = event;
-      //console.log("STANDARD", this.standard);
       this.addToSearch("calories", this.standard, true);
     },
     difficultyChanged(event) {
       event = event.sort();
       if (this.model.length > event.length) {
-        console.log("remove", _.difference(this.model, event)[0]);
-
         //deleted
         this.$emit(
           "onRemoveFromSearch",
@@ -469,19 +435,15 @@ export default {
         );
       } else {
         //added
-        console.log("add", _.difference(event, this.model)[0]);
         this.$emit(
           "onAddToSearch",
           "difficulty",
           this.englishDifficulty(_.difference(event, this.model)[0])
         );
       }
-      // console.log(this.model);
       this.model = event;
-      // console.log(event);
     },
     addToSearch(type, value, single = false, exclude = false) {
-      console.log("addToSearch", type, value, single, exclude);
       this.$emit("onAddToSearch", type, value, single, exclude);
     },
     removeFromSearch(type, value) {

@@ -2,15 +2,6 @@
   <q-layout>
     <q-header class="text-grey-1 q-py-xs edekaBar" height-hint="65">
       <q-toolbar>
-        <!-- <q-btn
-            flat
-            dense
-            round
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            aria-label="Menu"
-            icon="menu"
-          /> -->
-
         <q-btn flat no-caps no-wrap padding="0px 5px 0px 10px">
           <img :src="api + '/images/logo.png'" height="50px" />
           <q-toolbar-title
@@ -142,7 +133,6 @@
               <div class="text-h4 text-left">
                 Nährwerte pro Portion
                 <div class="row q-pa-md">
-                  <!-- <div v-for="i in 6" :key="i" class="q-pa-md"> -->
                   <div class="col">
                     <div class="row justify-center">
                       <q-knob
@@ -344,28 +334,18 @@ export default {
     }
   },
   mounted: function() {
-    // `this` points to the vm instance
-    console.log("here");
-
     if (this.recipe) {
       this.currentRecipe = this.recipe;
       this.servingSize = this.recipe.defaultServingSize;
     }
-    //if (!this.currentRecipe)
     this.loadData();
   },
-  //   deactivated () {
-  //     console.log('About has been deactivated')
-  //     this.recipe=null;
-  // },
+
   filters: {
     backendPictureUrl(recipe) {
       return process.env.API + "/images/recipe/" + recipe.seoTitle + "_big.jpg"; //url.split("/").slice(3).join("/");
     },
-    // cachedPictureUrl(url) {
-    //   //return url
-    //   return process.env.API + "/e_images/" + url.split("/").slice(3).join("/");
-    // },
+
     germanDifficulty(name) {
       switch (name) {
         case "EASY":
@@ -400,8 +380,6 @@ export default {
         .then(response => {
           this.currentRecipe = response.data;
           this.servingSize = response.data.defaultServingSize;
-          //this.recipeImageUrl = this.currentRecipe.pictureUrlBig;
-          //console.log(response.data);
         })
         .catch(() => {
           this.$q.notify({
@@ -429,20 +407,6 @@ export default {
       servingSize: 0
     };
   }
-  //   watch: {
-  //     "$props.value": {
-  //       handler: function (val, oldVal) {
-  //         console.log("watch Searchfilter", oldVal, val);
-  //         if (this.searchFilterEmpty) {
-  //           this.currentRecipes = [];
-  //           this.currentPage = 1;
-  //           return;
-  //         }
-  //         this.loadData();
-  //       },
-  //       deep: true,
-  //     },
-  //   },
 };
 </script>
 <style lang="sass" scoped>

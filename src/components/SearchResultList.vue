@@ -4,27 +4,6 @@
     style="overflow: auto; max-height: 90vh"
     v-if="search != ''"
   >
-    <!-- <q-scroll-area  style="height: 500px;"> -->
-    <!-- <template v-if="this.search == ''">
-          <q-item
-            style="max-width: 400px"
-            v-for="index in 6"
-            :key="index + 'I'"
-          >
-            <q-item-section avatar>
-              <q-skeleton size="40px" type="QAvatar" />
-            </q-item-section>
-
-            <q-item-section>
-              <q-item-label>
-                <q-skeleton type="text" />
-              </q-item-label>
-              <q-item-label caption>
-                <q-skeleton type="text" width="65%" />
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-    </template> -->
     <template
       v-if="
         !loading &&
@@ -54,11 +33,6 @@
           >Zutaten</q-item-label
         >
 
-        <!-- <transition-group
-        name="list-complete"
-        tag="div"
-        class="q-list q-list--separator"
-      > -->
         <template v-if="!loading">
           <template v-if="ingredients.length > 0">
             <q-item
@@ -259,11 +233,8 @@
             </q-item-section>
           </q-item>
         </template>
-
-        <!-- </transition-group> -->
       </q-list>
     </template>
-    <!-- </q-scroll-area> -->
   </div>
 </template>
 
@@ -328,14 +299,6 @@ export default {
         "</span>";
       result += text.substring(index + searchInput.length, text.length);
 
-      // for (let idx = 0; idx < text.length; idx++) {
-      //   if (idx >= index && idx < index + searchInput.length) {
-      //     result += "<span class='text-weight-bolder' style='text-decoration: underline'>" + text[idx] + "</span>";
-      //   } else {
-      //     result += text[idx];
-      //   }
-      // }
-
       return result;
     },
     addToSearch(type, value) {
@@ -344,17 +307,13 @@ export default {
 
     selectNext() {
       this.selectedIndex++;
-      //  console.log(this.selectedIndex);
     },
     selectPrev() {
       this.selectedIndex--;
-      //   console.log(this.selectedIndex);
     },
     async loadData(name) {
       this.cancelToken.cancel();
-      //await Promise.all(this.promises);
       let values = await Promise.all(this.promises);
-      //  console.log("ending2");
       for (let value of values) {
         if (Array.isArray(value)) {
           await Promise.all(value);
@@ -370,11 +329,8 @@ export default {
       if (name == "") {
         return;
       }
-      //const CancelToken = axios.CancelToken;
       this.loading = true;
-      //console.log("starting");
 
-      // console.log(this.$axios.defaults.baseURL);
       let ingredientRequestIdx = this.promises.length;
       this.promises[ingredientRequestIdx] = this.$axios
         .get("/ingredient", {
@@ -388,8 +344,6 @@ export default {
           let innerPromises = [];
           this.ingredients = response.data;
           for (let i = 0; i < this.ingredients.length; i++) {
-            //response.data[i].recipeCount = -1;
-            //this.ingredients.push(response.data[i]);
             innerPromises[innerPromises.length] = this.$axios
               .post(
                 "/recipe/count/id/" + this.ingredients[i].id,
@@ -400,12 +354,10 @@ export default {
               )
               .then(innerResponse => {
                 this.ingredients[i].recipeCount = innerResponse.data;
-                //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
                 this.$set(this.ingredients, i, this.ingredients[i]);
               })
               .catch(() => {
                 //nothing to do
-                console.log("aborted");
               });
           }
           if (this.search) {
@@ -415,12 +367,9 @@ export default {
               })
               .then(innerResponse => {
                 this.specialRecipeCount = innerResponse.data;
-                //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
-                //this.$set(this.ingredients, i, this.ingredients[i]);
               })
               .catch(() => {
                 //nothing to do
-                console.log("aborted");
               });
           }
 
@@ -444,7 +393,6 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
           this.recipes = response.data;
         })
         .catch(() => {
@@ -465,7 +413,6 @@ export default {
           }
         })
         .then(response => {
-          console.log(response.data);
           this.tags = response.data;
         })
         .catch(() => {
@@ -482,20 +429,15 @@ export default {
 
       Promise.all(this.promises).then(values => {
         this.loading = false;
-        //    console.log("ending");
       });
     }
   },
   mounted: function() {
-    // `this` points to the vm instance
-    // console.log("mounted");
-    // console.log(this.search);
     this.loadData(this.search);
   },
   watch: {
     "$props.search": {
       handler: function(val, oldVal) {
-        //    console.log("watch", oldVal, val);
         this.specialRecipeCount = -1;
         this.loadData(this.search);
       },
@@ -508,14 +450,11 @@ export default {
 .list-complete-item {
   padding: 0px;
   transition: all 0.5s ease;
-  /* display: inline-block; */
-  /*margin-right: 10px; */
 }
 
 .list-complete-enter-from,
 .list-complete-leave-to {
   opacity: 0;
-  /* transform: scale(0, 0); */
 }
 
 .list-complete-leave-active {
@@ -532,7 +471,6 @@ export default {
   font-weight: bold
   letter-spacing: 3px
 .q-item__section--avatar
-  //left: -20px
   position: relative
   padding-right: 0px
 .searchResult

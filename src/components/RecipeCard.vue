@@ -4,7 +4,7 @@
       <q-img
         :src="recipe | backendPictureUrl"
         @click="openRecipe()"
-        :class="[isShowing ? blurClass : '', bkClass]"
+        :class="[isShowing ? imageScaleClass : '', bkClass]"
         :ratio="1"
       >
         <div class="absolute-top text-subtitle2">
@@ -118,7 +118,6 @@ export default {
         formatedDate += m + " Min";
       }
       return formatedDate;
-      //return new Date(seconds * 1000).toISOString().substr(11, 8);
     },
     germanDifficulty(name) {
       switch (name) {
@@ -136,13 +135,10 @@ export default {
   methods: {
     async openRecipe() {
       this.isShowing = true;
-      await delay(80);
-      // return;
-      // let img = new Image();
 
-      // img.onload = () => {
-      //   console.log("img loaded");
-      //this.currentIndex = recipe.id;
+      // wait for animation
+      await delay(80);
+
       this.$router.push({
         name: "recipe",
         params: {
@@ -151,10 +147,6 @@ export default {
           index: this.index
         }
       });
-      //this.isShowing=false;
-      // };
-
-      // img.src = recipe.pictureUrlBig;
     },
     addToSearch(type, value) {
       this.$emit("onAddToSearch", type, value);
@@ -163,7 +155,7 @@ export default {
   data() {
     return {
       bkClass: "bk",
-      blurClass: "blur",
+      imageScaleClass: "imageScale",
       isShowing: false,
       loading: false,
       api: process.env.API,
@@ -171,41 +163,16 @@ export default {
     };
   },
   activated() {
-    console.log("RecipeCard has been activated");
     this.isShowing = false;
   }
-  //   watch: {
-  //     "$props.value": {
-  //       handler: function (val, oldVal) {
-
-  //         if (this.searchFilterEmpty) {
-  //           console.log("Searchfitler Empty");
-  //           this.currentRecipes = [];
-  //           this.currentPage = 1;
-  //           return;
-  //         }
-  //         this.currentPage = 1;
-  //         this.loadData();
-  //       },
-  //       deep: true,
-  //     },
-  //   },
 };
 </script>
 <style>
 .bk {
   transition: all 0.1s ease-in;
-  /* position: relative; */
-  /* height:100px;
-  width:100px; */
 }
 
-.blur {
-  /* filter: blur(2px);
-  opacity: 0.4; */
-  /* position: fixed;
-  top: 0px;
-  left: 0px; */
+.imageScale {
   z-index: 3;
   transform: scale(3);
   opacity: 0.5;
