@@ -28,9 +28,9 @@
     <template
       v-if="
         !loading &&
-        ingredients.length == 0 &&
-        tags.length == 0 &&
-        recipes.length == 0
+          ingredients.length == 0 &&
+          tags.length == 0 &&
+          recipes.length == 0
       "
     >
       <q-item class="list-complete-item">
@@ -114,7 +114,7 @@
                   id: search,
                   name: '*' + search + '*',
                   exclude: false,
-                  wildcard: true,
+                  wildcard: true
                 })
               "
             >
@@ -130,8 +130,8 @@
                       <span
                         v-html="
                           'Alle Zutaten die \'' +
-                          makeBold(this.search) +
-                          '\' enthalten'
+                            makeBold(this.search) +
+                            '\' enthalten'
                         "
                       ></span>
                     </h6>
@@ -224,7 +224,7 @@
             class="list-complete-item"
             :to="{
               name: 'recipe',
-              params: { recipeSeoTitle: recipe.seoTitle, recipe: recipe },
+              params: { recipeSeoTitle: recipe.seoTitle, recipe: recipe }
             }"
           >
             <q-item-section avatar>
@@ -276,12 +276,12 @@ export default {
   props: {
     search: {
       type: String,
-      required: true,
+      required: true
     },
     searchFilter: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   mixins: [SearchFilterMixin],
   data() {
@@ -294,7 +294,7 @@ export default {
       cancelToken: CancelToken.source(),
       promises: [],
       api: process.env.API,
-      specialRecipeCount: -1,
+      specialRecipeCount: -1
     };
   },
   computed: {
@@ -303,12 +303,12 @@ export default {
     },
     flatFilter() {
       return this.flatten(this.searchFilter);
-    },
+    }
   },
   filters: {
     backendPictureUrl(recipe) {
       return process.env.API + "/images/recipe/" + recipe.seoTitle + "_big.jpg"; //url.split("/").slice(3).join("/");
-    },
+    }
   },
 
   methods: {
@@ -381,10 +381,10 @@ export default {
           cancelToken: this.cancelToken.token,
           params: {
             name: name,
-            count: 5,
-          },
+            count: 5
+          }
         })
-        .then((response) => {
+        .then(response => {
           let innerPromises = [];
           this.ingredients = response.data;
           for (let i = 0; i < this.ingredients.length; i++) {
@@ -395,10 +395,10 @@ export default {
                 "/recipe/count/id/" + this.ingredients[i].id,
                 this.flatFilter,
                 {
-                  cancelToken: this.cancelToken.token,
+                  cancelToken: this.cancelToken.token
                 }
               )
-              .then((innerResponse) => {
+              .then(innerResponse => {
                 this.ingredients[i].recipeCount = innerResponse.data;
                 //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
                 this.$set(this.ingredients, i, this.ingredients[i]);
@@ -411,9 +411,9 @@ export default {
           if (this.search) {
             innerPromises[innerPromises.length] = this.$axios
               .post("/recipe/count/name/" + this.search, this.flatFilter, {
-                cancelToken: this.cancelToken.token,
+                cancelToken: this.cancelToken.token
               })
-              .then((innerResponse) => {
+              .then(innerResponse => {
                 this.specialRecipeCount = innerResponse.data;
                 //this.ingredients.push(response.data[i]); //.recipeCount = response.data;
                 //this.$set(this.ingredients, i, this.ingredients[i]);
@@ -431,7 +431,7 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem",
+            icon: "report_problem"
           });
         });
 
@@ -440,10 +440,10 @@ export default {
           cancelToken: this.cancelToken.token,
           params: {
             name: name,
-            count: 3,
-          },
+            count: 3
+          }
         })
-        .then((response) => {
+        .then(response => {
           console.log(response.data);
           this.recipes = response.data;
         })
@@ -452,7 +452,7 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem",
+            icon: "report_problem"
           });
         });
 
@@ -461,10 +461,10 @@ export default {
           params: {
             cancelToken: this.cancelToken.token,
             name: name,
-            count: 5,
-          },
+            count: 5
+          }
         })
-        .then((response) => {
+        .then(response => {
           console.log(response.data);
           this.tags = response.data;
         })
@@ -473,20 +473,20 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem",
+            icon: "report_problem"
           });
         });
 
       // test sleep
       // this.promises[this.promises.length] = new Promise(resolve => setTimeout(resolve, 3000));
 
-      Promise.all(this.promises).then((values) => {
+      Promise.all(this.promises).then(values => {
         this.loading = false;
         //    console.log("ending");
       });
-    },
+    }
   },
-  mounted: function () {
+  mounted: function() {
     // `this` points to the vm instance
     // console.log("mounted");
     // console.log(this.search);
@@ -494,14 +494,14 @@ export default {
   },
   watch: {
     "$props.search": {
-      handler: function (val, oldVal) {
+      handler: function(val, oldVal) {
         //    console.log("watch", oldVal, val);
         this.specialRecipeCount = -1;
         this.loadData(this.search);
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 <style scoped>

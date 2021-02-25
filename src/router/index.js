@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import routes from './routes'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import routes from "./routes";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 /*
  * If not building with SSR mode, you can
@@ -13,19 +13,20 @@ Vue.use(VueRouter)
  * with the Router instance.
  */
 
-
- export default function (/* { store, ssrContext } */) {
+export default function(/* { store, ssrContext } */) {
   const Router = new VueRouter({
-    scrollBehavior (to, from, savedPosition) {
-      if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+    scrollBehavior(to, from, savedPosition) {
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
 
       if (savedPosition) {
-        return savedPosition
+        return savedPosition;
       } else {
-        return { x: 0, y: 0 }
+        return { x: 0, y: 0 };
       }
     },
-    
+
     routes,
 
     // Leave these as they are and change in quasar.conf.js instead!
@@ -33,6 +34,6 @@ Vue.use(VueRouter)
     // quasar.conf.js -> build -> publicPath
     mode: process.env.VUE_ROUTER_MODE,
     base: process.env.VUE_ROUTER_BASE
-  })
-  return Router
+  });
+  return Router;
 }

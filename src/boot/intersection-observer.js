@@ -1,7 +1,7 @@
 // import something here
-import 'intersection-observer';
+import "intersection-observer";
 // "async" is optional;
 // more info on params: https://quasar.dev/quasar-cli/boot-files
 // export default async (/* { app, router, Vue ... } */) => {
-  // something to do
+// something to do
 // }

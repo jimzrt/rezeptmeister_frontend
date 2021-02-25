@@ -12,17 +12,16 @@ const routes = [
 
         component: () => import("components/RecipeOverview.vue"),
         props: true
-      },
-    ],
+      }
+    ]
   },
-
 
   // Always leave this as last one,
   // but you can also remove it
   {
     path: "*",
-    component: () => import("pages/Error404.vue"),
-  },
+    component: () => import("pages/Error404.vue")
+  }
 ];
 
 export default routes;

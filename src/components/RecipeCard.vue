@@ -1,99 +1,98 @@
 <template>
-    <div>
-      <q-card
-        class="my-card"
-       
+  <div>
+    <q-card class="my-card">
+      <q-img
+        :src="recipe | backendPictureUrl"
+        @click="openRecipe()"
+        :class="[isShowing ? blurClass : '', bkClass]"
+        :ratio="1"
       >
-          <q-img
-            :src="recipe | backendPictureUrl"
-            @click="openRecipe()"
-            :class="[isShowing ? blurClass : '', bkClass]"
-            :ratio="1"
-          >
-            <div class="absolute-top text-subtitle2">
-              {{ recipe.difficulty | germanDifficulty }}
-            </div>
-          </q-img>
-        
+        <div class="absolute-top text-subtitle2">
+          {{ recipe.difficulty | germanDifficulty }}
+        </div>
+      </q-img>
 
-        <q-card-section>
-          <div class="row no-wrap items-center">
-              <div class="text-h6 my-font col ellipsis">
-                {{ recipe.title }}
-              </div>
-            <div
-              class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
-            >
-              <!-- <q-icon name="place" /> -->
-              <div>{{ recipe.calories }} kcal</div>
-              <div>
-                {{ recipe.totalTimeInSeconds | formatDate }}
-              </div>
+      <q-card-section>
+        <div class="row no-wrap items-center">
+          <div class="text-h6 my-font col ellipsis">
+            {{ recipe.title }}
+          </div>
+          <div
+            class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
+          >
+            <!-- <q-icon name="place" /> -->
+            <div>{{ recipe.calories }} kcal</div>
+            <div>
+              {{ recipe.totalTimeInSeconds | formatDate }}
             </div>
           </div>
-          <!-- <div class="text-subtitle2">by Edeka</div> -->
-        </q-card-section>
-        <q-separator />
-        <q-card-section horizontal>
-          <q-card-section
-            class="text-body2"
-            style="
+        </div>
+        <!-- <div class="text-subtitle2">by Edeka</div> -->
+      </q-card-section>
+      <q-separator />
+      <q-card-section horizontal>
+        <q-card-section
+          class="text-body2"
+          style="
               align-items: center;
               display: flex;
               text-align: center;
               text-align: justify;
             "
-          >
-            {{ recipe.description }}
-          </q-card-section>
-
-          <q-separator style="flex-shrink: 0" vertical />
-
-          <q-card-section
-            class="col-4 text-caption"
-            style="text-align: center"
-            v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
-          >
-            <q-chip
-              dense
-              square
-              v-for="tag in recipe.tags"
-              clickable
-              class="clipped"
-              @click="addToSearch('tag', tag)"
-              :key="tag.id"
-              color="secondary"
-              text-color="white"
-            >
-              {{ tag.name }}
-            </q-chip>
-          </q-card-section>
+        >
+          {{ recipe.description }}
         </q-card-section>
-        <q-separator />
-        <q-card-section horizontal  >
-          <q-card-section class="text-body2 shadowy" :style="expanded ? '' : 'height: 90px;overflow: hidden;'">
-            <q-chip
-              dense
-              square
-              v-for="ingredient in recipe.ingredients"
-              :key="ingredient.id"
-              clickable
-              @click="addToSearch('ingredient', ingredient)"
-              color="primary"
-              text-color="white"
-            >
-              {{ ingredient.name }}
-            </q-chip>
-          </q-card-section>
+
+        <q-separator style="flex-shrink: 0" vertical />
+
+        <q-card-section
+          class="col-4 text-caption"
+          style="text-align: center"
+          v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
+        >
+          <q-chip
+            dense
+            square
+            v-for="tag in recipe.tags"
+            clickable
+            class="clipped"
+            @click="addToSearch('tag', tag)"
+            :key="tag.id"
+            color="secondary"
+            text-color="white"
+          >
+            {{ tag.name }}
+          </q-chip>
         </q-card-section>
-      </q-card>
-      <q-btn
-        color="info"
-        class="full-width expand-button"
-        :icon="expanded ? 'expand_less' : 'expand_more'"
-        @click="expanded = !expanded"
-      />
-    </div>
+      </q-card-section>
+      <q-separator />
+      <q-card-section horizontal>
+        <q-card-section
+          class="text-body2 shadowy"
+          :style="expanded ? '' : 'height: 90px;overflow: hidden;'"
+        >
+          <q-chip
+            dense
+            square
+            v-for="ingredient in recipe.ingredients"
+            :key="ingredient.id"
+            clickable
+            @click="addToSearch('ingredient', ingredient)"
+            color="primary"
+            text-color="white"
+          >
+            {{ ingredient.name }}
+          </q-chip>
+        </q-card-section>
+      </q-card-section>
+    </q-card>
+    <q-btn
+      color="info"
+      class="full-width expand-button"
+      :icon="expanded ? 'expand_less' : 'expand_more'"
+      @click="expanded = !expanded"
+    />
+  </div>
 </template>
 <script>
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -101,7 +100,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 export default {
   name: "RecipeCard",
   props: ["recipe", "index"],
-  components: {  },
+  components: {},
   mixins: [],
   computed: {},
   filters: {
@@ -132,13 +131,13 @@ export default {
         default:
           return name;
       }
-    },
+    }
   },
   methods: {
     async openRecipe() {
       this.isShowing = true;
       await delay(80);
-     // return;
+      // return;
       // let img = new Image();
 
       // img.onload = () => {
@@ -149,8 +148,8 @@ export default {
         params: {
           recipeSeoTitle: this.recipe.seoTitle,
           recipe: this.recipe,
-          index: this.index,
-        },
+          index: this.index
+        }
       });
       //this.isShowing=false;
       // };
@@ -159,22 +158,22 @@ export default {
     },
     addToSearch(type, value) {
       this.$emit("onAddToSearch", type, value);
-    },
+    }
   },
   data() {
     return {
-      bkClass: 'bk',
-      blurClass: 'blur',
+      bkClass: "bk",
+      blurClass: "blur",
       isShowing: false,
       loading: false,
       api: process.env.API,
-      expanded: false,
+      expanded: false
     };
   },
-  activated () {
-    console.log('RecipeCard has been activated');
-    this.isShowing=false;
-},
+  activated() {
+    console.log("RecipeCard has been activated");
+    this.isShowing = false;
+  }
   //   watch: {
   //     "$props.value": {
   //       handler: function (val, oldVal) {
@@ -193,13 +192,12 @@ export default {
   //   },
 };
 </script>
-<style >
+<style>
 .bk {
   transition: all 0.1s ease-in;
   /* position: relative; */
   /* height:100px;
   width:100px; */
-
 }
 
 .blur {
@@ -211,24 +209,22 @@ export default {
   z-index: 3;
   transform: scale(3);
   opacity: 0.5;
-  overflow:hidden;
+  overflow: hidden;
 }
 .material-icons {
-    color:white
+  color: white;
 }
 
-
-
 .shadowy:before {
-  content:'';
-  box-shadow: 0px -10px 20px  #141414 inset;
-  display:block;
-   position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    z-index: 1;
+  content: "";
+  box-shadow: 0px -10px 20px #141414 inset;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 </style>
 <style lang="sass">
@@ -239,5 +235,4 @@ export default {
   overflow: hidden
 .active
   z-index: 1
-
 </style>

@@ -24,7 +24,9 @@
               v-for="(searchKey, index) in nonEmptyFilter"
               :key="searchKey"
             >
-              <template v-if="index > 0"><q-separator vertical /></template>
+              <template v-if="index > 0"
+                ><q-separator vertical
+              /></template>
               <template>
                 <q-btn stretch flat :label="searchKey | canonicalName" />
                 <q-chip
@@ -144,7 +146,7 @@
                   label-always
                   :label-value="totalTimeLabel | formatDate"
                   @change="totalTimeChanged"
-                  @input="(val) => (totalTimeLabel = val)"
+                  @input="val => (totalTimeLabel = val)"
                   snap
                 />
               </div>
@@ -181,7 +183,9 @@
               gap: 6px;
             "
           >
-            <template v-if="index > 0"><q-separator /></template>
+            <template v-if="index > 0"
+              ><q-separator
+            /></template>
             <template>
               <q-btn stretch flat :label="searchKey | canonicalName" />
               <q-chip
@@ -299,7 +303,7 @@
                 :label-value="totalTimeLabel | formatDate"
                 @change="totalTimeChanged"
                 @input="
-                  (val) => {
+                  val => {
                     totalTimeLabel = val;
                   }
                 "
@@ -367,7 +371,7 @@ export default {
       let a = Object.keys(this.value)
         .sort()
         .filter(
-          (key) =>
+          key =>
             key != "difficulty" &&
             key != "calories" &&
             key != "exclude" &&
@@ -378,7 +382,7 @@ export default {
         );
       console.log(a);
       return a;
-    },
+    }
   },
   filters: {
     formatDate(seconds) {
@@ -408,7 +412,7 @@ export default {
         default:
           return name;
       }
-    },
+    }
   },
   methods: {
     onClickAnywhere(event) {
@@ -490,7 +494,7 @@ export default {
     },
     updateData() {
       this.$emit("input", this.dataCopy);
-    },
+    }
   },
   data() {
     return {
@@ -505,17 +509,17 @@ export default {
       options: ["Einfach", "Medium", "Schwer"],
       isOverflowing: false,
       drawer: false,
-      third: true,
+      third: true
     };
   },
   watch: {
     "$props.value": {
-      handler: function (val, oldVal) {
+      handler: function(val, oldVal) {
         this.checkOverflow();
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 

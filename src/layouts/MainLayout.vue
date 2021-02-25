@@ -1,15 +1,13 @@
 <template>
-    <keep-alive exclude="RecipeOverview">
-      <router-view />
-    </keep-alive>
+  <keep-alive exclude="RecipeOverview">
+    <router-view />
+  </keep-alive>
 </template>
 
 <script>
-
 export default {
   name: "MyLayout",
-  components: {
-  },
+  components: {},
   data() {
     return {};
   },
@@ -18,13 +16,10 @@ export default {
   computed: {
     key() {
       return this.$route.path;
-    },
+    }
   },
-  methods: {
-  },
-  mounted() {
-
-  },
+  methods: {},
+  mounted() {}
 };
 </script>
 <style scoped>

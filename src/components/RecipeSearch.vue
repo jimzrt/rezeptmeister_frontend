@@ -220,7 +220,7 @@ export default {
   components: {
     RecipeResultGrid,
     SearchResultList,
-    SearchFilterBar,
+    SearchFilterBar
   },
   data() {
     return {
@@ -231,7 +231,7 @@ export default {
       searchInput: "",
       selected: "",
       searchFilter: {},
-      api: process.env.API,
+      api: process.env.API
     };
   },
   // watch: {
@@ -248,19 +248,17 @@ export default {
 
   computed: {
     searchFilterEmpty() {
-      let deepCheck = function (filter) {
+      let deepCheck = function(filter) {
         if (_.isArray(filter)) {
-          return _.every(filter.map((value) => deepCheck(value)));
+          return _.every(filter.map(value => deepCheck(value)));
         }
         if (_.isPlainObject(filter)) {
-          return _.every(
-            Object.values(filter).map((value) => deepCheck(value))
-          );
+          return _.every(Object.values(filter).map(value => deepCheck(value)));
         }
         return filter == 0 || filter == "" || filter == undefined;
       };
       return deepCheck(this.searchFilter);
-    },
+    }
   },
   methods: {
     addToSearch(type, value, single = false, exclude = false) {
@@ -282,7 +280,7 @@ export default {
         }
 
         const index = this.searchFilter[type].findIndex(
-          (val) => val.id === value.id
+          val => val.id === value.id
         );
         if (index == -1) {
           return;
@@ -293,7 +291,7 @@ export default {
         } else {
           this.$set(this.searchFilter[type], index, {
             ...value,
-            exclude: true,
+            exclude: true
           });
         }
 
@@ -370,10 +368,10 @@ export default {
       //console.log(this.searchFilter);
     },
     // todo: loosely couple trigger via prop instead of using refs
-    selectNextSuggestion: function () {
+    selectNextSuggestion: function() {
       this.$refs.searchResult.selectNext();
     },
-    selectPrevSuggestion: function () {
+    selectPrevSuggestion: function() {
       this.$refs.searchResult.selectPrev();
     },
     onClickAnywhere(event) {
@@ -387,8 +385,8 @@ export default {
         //console.log("OUTSIDE");
         this.searchFocus = false;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped>

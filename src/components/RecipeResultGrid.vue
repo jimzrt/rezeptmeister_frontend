@@ -106,7 +106,7 @@ export default {
     },
     flatFilter() {
       return this.flatten(this.value);
-    },
+    }
   },
   filters: {
     backendPictureUrl(recipe) {
@@ -129,7 +129,7 @@ export default {
         default:
           return name;
       }
-    },
+    }
   },
   activated() {
     console.log("About has been activated");
@@ -141,7 +141,6 @@ export default {
     this.intersectionDisabled = true;
   },
   methods: {
-
     // recipeTags(recipe) {
     //   if (this.expandedCards.has(recipe.id)) {
     //     return recipe.tags;
@@ -174,8 +173,8 @@ export default {
         params: {
           recipeSeoTitle: recipe.seoTitle,
           recipe: recipe,
-          index: index,
-        },
+          index: index
+        }
       });
       // };
 
@@ -186,10 +185,10 @@ export default {
     },
     styleIngredients(ingredients) {
       return ingredients
-        .map((i) => {
+        .map(i => {
           if (
             this.value["ingredient"] &&
-            this.value["ingredient"].some((element) => element.id === i.id)
+            this.value["ingredient"].some(element => element.id === i.id)
           ) {
             return "<span class='text-weight-bold'>" + i.name + "</span>";
           }
@@ -224,7 +223,7 @@ export default {
       this.currentPlaceholders = 0;
       await this.$nextTick();
       this.$q.loading.show({
-        delay: 0, // ms
+        delay: 0 // ms
       });
       console.log("construct searchFilter from", this.value);
 
@@ -271,7 +270,7 @@ export default {
 
       this.loadPromise = this.$axios
         .post("/recipe/search", searchFilter)
-        .then(async (response) => {
+        .then(async response => {
           this.currentRecipes = [];
 
           this.totalElements = response.data.totalElements;
@@ -299,7 +298,7 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem",
+            icon: "report_problem"
           });
         })
         .then(() => {
@@ -308,7 +307,7 @@ export default {
           this.currentPlaceholders = 0;
         });
       // });
-    },
+    }
   },
   data() {
     return {
@@ -325,14 +324,13 @@ export default {
       expandedCards: [],
       resultsPerPageOptions: [12, 24, 36, 48, 96, 192],
       cancelToken: {},
-      loadPromise: null,
+      loadPromise: null
     };
   },
 
-
   watch: {
     "$props.value": {
-      handler: function (val, oldVal) {
+      handler: function(val, oldVal) {
         if (this.searchFilterEmpty) {
           console.log("Searchfitler Empty");
           this.currentRecipes = [];
@@ -342,9 +340,9 @@ export default {
         this.currentPage = 1;
         this.loadData();
       },
-      deep: true,
-    },
-  },
+      deep: true
+    }
+  }
 };
 </script>
 <style scoped>
