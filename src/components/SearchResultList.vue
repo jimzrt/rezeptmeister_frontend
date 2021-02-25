@@ -34,6 +34,7 @@
         >
 
         <template v-if="!loading">
+          <div style="max-height:400px;overflow-y: scroll">
           <template v-if="ingredients.length > 0">
             <q-item
               clickable
@@ -132,6 +133,7 @@
               </q-item-section>
             </q-item>
           </template>
+          </div>
         </template>
         <template v-else>
           <q-item
@@ -333,12 +335,8 @@ export default {
 
       let ingredientRequestIdx = this.promises.length;
       this.promises[ingredientRequestIdx] = this.$axios
-        .get("/ingredient", {
+        .post("/ingredient/"+name, this.flatFilter,{
           cancelToken: this.cancelToken.token,
-          params: {
-            name: name,
-            count: 5
-          }
         })
         .then(response => {
           let innerPromises = [];
@@ -352,10 +350,10 @@ export default {
                   cancelToken: this.cancelToken.token
                 }
               )
-              .then(innerResponse => {
-                this.ingredients[i].recipeCount = innerResponse.data;
-                this.$set(this.ingredients, i, this.ingredients[i]);
-              })
+              // .then(innerResponse => {
+              //   this.ingredients[i].recipeCount = innerResponse.data;
+              //   this.$set(this.ingredients, i, this.ingredients[i]);
+              // })
               .catch(() => {
                 //nothing to do
               });
