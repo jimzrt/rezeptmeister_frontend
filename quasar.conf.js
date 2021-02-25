@@ -42,7 +42,7 @@ module.exports = function(ctx) {
       vueRouterMode: "hash", // available values: 'hash', 'history'
 
       env: {
-        API: ctx.dev ? "http://192.168.0.199:54321" : ""
+        API: process.env.API
       },
       // transpile: false,
 
