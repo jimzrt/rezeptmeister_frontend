@@ -3,7 +3,7 @@
     <q-page-sticky
       expand
       position="top"
-      style="transform: translate(0px, 60px)"
+      style="transform: translate(0px, 60px);z-index:10"
     >
       <q-toolbar class="toolbar shadow-1" style="white-space: nowrap">
         <div
