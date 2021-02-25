@@ -17,7 +17,7 @@
     "intersection-observer": "^0.11.0",
     "lodash": "^4.17.20",
     "quasar": "^1.0.0",
-    "vue-flip-toolkit": "^1.6.0"
+    "sass": "^1.32.8"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",

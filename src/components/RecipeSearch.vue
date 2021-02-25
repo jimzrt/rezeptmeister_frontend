@@ -245,6 +245,7 @@ export default {
   destroyed() {
     document.removeEventListener("click", this.onClickAnywhere);
   },
+
   computed: {
     searchFilterEmpty() {
       let deepCheck = function (filter) {
@@ -278,26 +279,31 @@ export default {
         if (!(type in this.searchFilter)) {
           return;
           //this.$set(this.searchFilter, type, []);
-        } 
-        
-          const index = this.searchFilter[type].findIndex(val => val.id === value.id);
-          if(index == -1){
-            return;
-          }
-          if('exclude' in this.searchFilter[type][index]){
-            value['exclude'] = !value['exclude'];
-            this.$set(this.searchFilter[type], index, value)
-          } else {
-            this.$set(this.searchFilter[type], index, {...value, exclude: true})
-          }
+        }
 
+        const index = this.searchFilter[type].findIndex(
+          (val) => val.id === value.id
+        );
+        if (index == -1) {
           return;
-          // _.find(this.searchFilter[type], value){
-          //   this.removeFromSearch(type, value);
-          //   this.addToSearch(type, value);
-          //   return;
-          // }
-        
+        }
+        if ("exclude" in this.searchFilter[type][index]) {
+          value["exclude"] = !value["exclude"];
+          this.$set(this.searchFilter[type], index, value);
+        } else {
+          this.$set(this.searchFilter[type], index, {
+            ...value,
+            exclude: true,
+          });
+        }
+
+        return;
+        // _.find(this.searchFilter[type], value){
+        //   this.removeFromSearch(type, value);
+        //   this.addToSearch(type, value);
+        //   return;
+        // }
+
         // this.removeFromSearch(type, value);
         // this.searchFilter["exclude"][type].push(value);
         // return;
@@ -427,7 +433,7 @@ export default {
 .q-field--standout .q-field__control
   background: $grey-5
 .q-field__bottom
-  z-index: 9999;
+  z-index: 9999
 .q-field--with-bottom
   padding-bottom: 0px
 .q-field--dense
@@ -455,7 +461,7 @@ export default {
     min-width: 200px
     width: 100%
     .q-field__bottom
-      padding: 0px;
+      padding: 0px
   &__toolbar-input-btn
     border-radius: 0
     border-style: solid

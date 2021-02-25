@@ -46,13 +46,11 @@
     <q-page-container>
       <div style="" class="content" v-if="currentRecipe">
         <div class="img" style="">
-          <Flipped :flip-id="index + ''" scale translate>
             <img
               :src="
                 api + '/images/recipe/' + currentRecipe.seoTitle + '_big.jpg'
               "
             />
-          </Flipped>
 
           <!-- <div class="overlay"></div> -->
         </div>
@@ -65,17 +63,14 @@
           "
           style=""
         >
-          <Flipped :flip-id="index + '_1'" scale translate>
             <q-card
               v-bind:class="$q.screen.gt.sm ? 'q-pa-xl' : ''"
               style="min-height: calc(100vh - 700px); margin-top: 30px"
             >
               <q-card-section>
-                <Flipped :flip-id="index + '_2'" scale translate>
                   <div class="text-h2 my-font resultHeading">
                     {{ currentRecipe.title }}
                   </div>
-                </Flipped>
                 <div class="text-h6">{{ currentRecipe.description }}</div>
                 <div class="text-subtitle2">by Edeka</div>
               </q-card-section>
@@ -323,7 +318,6 @@
                 </q-timeline>
               </q-card-section>
             </q-card>
-          </Flipped>
         </div>
       </div>
     </q-page-container>
@@ -331,12 +325,11 @@
 </template>
 
 <script>
-import { Flipped } from "vue-flip-toolkit";
 
 export default {
   name: "RecipeOverview",
   props: ["recipeSeoTitle", "recipe", "index"],
-  components: { Flipped },
+  components: {  },
   computed: {
     layout() {
       return this.$q.screen.lt.sm

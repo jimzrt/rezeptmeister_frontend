@@ -1,29 +1,26 @@
 <template>
-  <Flipped :flip-id="index + '_1'" scale translate>
     <div>
       <q-card
         class="my-card"
-        v-bind:style="expanded ? '' : 'height: 750px;overflow: hidden;'"
+       
       >
-        <Flipped :flip-id="index + ''" scale translate>
           <q-img
             :src="recipe | backendPictureUrl"
             @click="openRecipe()"
+            :class="[isShowing ? blurClass : '', bkClass]"
             :ratio="1"
           >
             <div class="absolute-top text-subtitle2">
               {{ recipe.difficulty | germanDifficulty }}
             </div>
           </q-img>
-        </Flipped>
+        
 
         <q-card-section>
           <div class="row no-wrap items-center">
-            <Flipped :flip-id="index + '_2'" scale translate>
               <div class="text-h6 my-font col ellipsis">
                 {{ recipe.title }}
               </div>
-            </Flipped>
             <div
               class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
             >
@@ -73,8 +70,8 @@
           </q-card-section>
         </q-card-section>
         <q-separator />
-        <q-card-section horizontal>
-          <q-card-section class="text-body2">
+        <q-card-section horizontal  >
+          <q-card-section class="text-body2 shadowy" :style="expanded ? '' : 'height: 90px;overflow: hidden;'">
             <q-chip
               dense
               square
@@ -87,7 +84,6 @@
             >
               {{ ingredient.name }}
             </q-chip>
-            <!-- <span v-html="styleIngredients(recipe.ingredients)"></span> -->
           </q-card-section>
         </q-card-section>
       </q-card>
@@ -98,15 +94,14 @@
         @click="expanded = !expanded"
       />
     </div>
-  </Flipped>
 </template>
 <script>
-import { Flipped } from "vue-flip-toolkit";
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 export default {
   name: "RecipeCard",
   props: ["recipe", "index"],
-  components: { Flipped },
+  components: {  },
   mixins: [],
   computed: {},
   filters: {
@@ -140,7 +135,10 @@ export default {
     },
   },
   methods: {
-    openRecipe() {
+    async openRecipe() {
+      this.isShowing = true;
+      await delay(80);
+     // return;
       // let img = new Image();
 
       // img.onload = () => {
@@ -154,6 +152,7 @@ export default {
           index: this.index,
         },
       });
+      //this.isShowing=false;
       // };
 
       // img.src = recipe.pictureUrlBig;
@@ -164,11 +163,18 @@ export default {
   },
   data() {
     return {
+      bkClass: 'bk',
+      blurClass: 'blur',
+      isShowing: false,
       loading: false,
       api: process.env.API,
       expanded: false,
     };
   },
+  activated () {
+    console.log('RecipeCard has been activated');
+    this.isShowing=false;
+},
   //   watch: {
   //     "$props.value": {
   //       handler: function (val, oldVal) {
@@ -187,7 +193,44 @@ export default {
   //   },
 };
 </script>
+<style >
+.bk {
+  transition: all 0.1s ease-in;
+  /* position: relative; */
+  /* height:100px;
+  width:100px; */
 
+}
+
+.blur {
+  /* filter: blur(2px);
+  opacity: 0.4; */
+  /* position: fixed;
+  top: 0px;
+  left: 0px; */
+  z-index: 3;
+  transform: scale(3);
+  opacity: 0.5;
+  overflow:hidden;
+}
+.material-icons {
+    color:white
+}
+
+
+
+.shadowy:before {
+  content:'';
+  box-shadow: 0px -10px 20px  #141414 inset;
+  display:block;
+   position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index: 1;
+}
+</style>
 <style lang="sass">
 .my-card
   width: 400px
@@ -196,6 +239,5 @@ export default {
   overflow: hidden
 .active
   z-index: 1
-.expand-button .q-btn__content
-  color:white!important
+
 </style>

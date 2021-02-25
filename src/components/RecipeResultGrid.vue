@@ -328,6 +328,8 @@ export default {
       loadPromise: null,
     };
   },
+
+
   watch: {
     "$props.value": {
       handler: function (val, oldVal) {
@@ -369,8 +371,8 @@ export default {
   z-index: 1
 .pagination-bar
   background-color: var(--q-color-background)
-.expand-button .q-btn__content
-  color:white!important
+// .expand-button .q-btn__content
+//   color:white !important
 .top-banner-pagination
   background-color: var(--q-color-background)
 .q-skeleton--anim-wave, .q-skeleton--anim-blink, .q-skeleton--anim-pop
