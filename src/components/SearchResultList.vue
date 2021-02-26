@@ -34,7 +34,7 @@
         >
 
         <template v-if="!loading">
-          <div style="max-height:400px;overflow-y: scroll">
+          <div style="max-height:300px;overflow-y: scroll">
             <template v-if="ingredients.length > 0">
               <q-item
                 clickable
