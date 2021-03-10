@@ -46,7 +46,7 @@
         <q-separator style="flex-shrink: 0" vertical />
 
         <q-card-section
-          class="col-4 text-caption"
+          class="col-4 text-caption shadowy"
           style="text-align: center"
           v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
         >
