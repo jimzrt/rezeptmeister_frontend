@@ -169,13 +169,12 @@ export default {
 </script>
 <style>
 .bk {
-  transition: all 0.1s ease-in;
+  transition: all 0.2s ease-in;
 }
 
 .imageScale {
   z-index: 3;
-  transform: scale(3);
-  opacity: 0.5;
+  transform: scale(4);
   overflow: hidden;
 }
 
@@ -203,7 +202,6 @@ export default {
 </style>
 <style lang="sass">
 .my-card
-  width: 400px
   transition: all 0.5s
 .clipped
   overflow: hidden
