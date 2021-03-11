@@ -42,7 +42,7 @@ module.exports = function(ctx) {
       vueRouterMode: "hash", // available values: 'hash', 'history'
 
       env: {
-        API: "/api" //process.env.API
+        API: process.env.API || "/api" // "https://rezeptmeister.tk/api"
       },
       // transpile: false,
 
