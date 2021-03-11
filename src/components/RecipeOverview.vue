@@ -48,7 +48,7 @@
           v-bind:style="
             $q.screen.gt.sm
               ? 'margin-top: 200px;padding: 200px 15%;'
-              : 'margin-top: 20px;padding: 150px 5%;'
+              : 'margin-top: 20px;padding: 150px 1%;'
           "
           style=""
         >
@@ -65,8 +65,8 @@
             </q-card-section>
 
             <q-card-section v-if="loaded" class="fade-card">
-              <div class="q-pa-md">
-                <div class="text-h4 text-left">
+              <div style="margin-bottom:15px;">
+                <div class="text-h4 text-left" style="margin-bottom:15px">
                   Zutaten für
                   <q-btn
                     round
@@ -84,14 +84,15 @@
                   Portionen
                 </div>
 
-                <div class="row q-pa-md">
+                <div class="row  emulated-flex-gap">
                   <q-markup-table
-                    v-for="(ingredientGroup,
-                    index) in currentRecipe.ingredientGroups"
+                    v-for="(
+                      ingredientGroup, index
+                    ) in currentRecipe.ingredientGroups"
                     :key="index"
                     separator="cell"
-                    class="col"
-                    style="min-width: 300px; padding: 10px; margin: 20px"
+                    class=""
+                    style="margin-top: 15px; margin-bottom: 15px: "
                   >
                     <thead v-if="ingredientGroup.name">
                       <tr>
@@ -132,151 +133,41 @@
               </div>
               <div class="text-h4 text-left">
                 Nährwerte pro Portion
-                <div class="row q-pa-md">
-                  <div class="col">
-                    <div class="row justify-center">
-                      <q-knob
-                        :min="0"
-                        :max="8400"
-                        :value="currentRecipe.nutrition.kj"
-                        readonly
-                        show-value
-                        size="110px"
-                        :thickness="0.1"
-                        color="teal"
-                        track-color="grey-3"
-                        font-size="16px"
-                      >
-                        <div>
-                          <div class="row justify-center">
-                            {{ currentRecipe.nutrition.kj }}kj
-                          </div>
-                          <div class="row justify-center">
-                            {{ Math.round(currentRecipe.nutrition.kj / 84) }}%
-                          </div>
+                <div class="row">
+                  <div
+                    class="column items-center q-pa-md"
+                    v-for="nutrition in nutritions"
+                    :key="nutrition.prop"
+                  >
+                    <q-knob
+                      :min="0"
+                      :max="nutrition.max"
+                      :value="currentRecipe.nutrition[nutrition.prop]"
+                      readonly
+                      show-value
+                      size="110px"
+                      :thickness="0.1"
+                      color="teal"
+                      track-color="grey-3"
+                      font-size="16px"
+                    >
+                      <div class="column items-center">
+                        <div class="">
+                          {{ currentRecipe.nutrition[nutrition.prop]
+                          }}{{ nutrition.unit }}
                         </div>
-                      </q-knob>
-                    </div>
-                    <div class="row justify-center" style="font-size: 14px">
-                      Energie
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="row justify-center">
-                      <q-knob
-                        :min="0"
-                        :max="2000"
-                        :value="currentRecipe.nutrition.kcal"
-                        readonly
-                        show-value
-                        size="110px"
-                        :thickness="0.1"
-                        color="teal"
-                        track-color="grey-3"
-                        font-size="16px"
-                      >
-                        <div>
-                          <div class="row justify-center">
-                            {{ currentRecipe.nutrition.kcal }}kcal
-                          </div>
-                          <div class="row justify-center">
-                            {{ Math.round(currentRecipe.nutrition.kcal / 20) }}%
-                          </div>
+                        <div class="">
+                          {{
+                            Math.round(
+                              currentRecipe.nutrition[nutrition.prop] /
+                                nutrition.factor
+                            )
+                          }}%
                         </div>
-                      </q-knob>
-                    </div>
-                    <div class="row justify-center" style="font-size: 14px">
-                      Kalorien
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="row justify-center">
-                      <q-knob
-                        :min="0"
-                        :max="260"
-                        :value="currentRecipe.nutrition.carbohydrates"
-                        readonly
-                        show-value
-                        size="110px"
-                        :thickness="0.1"
-                        color="teal"
-                        track-color="grey-3"
-                        font-size="16px"
-                      >
-                        <div>
-                          <div class="row justify-center">
-                            {{ currentRecipe.nutrition.carbohydrates }}g
-                          </div>
-                          <div class="row justify-center">
-                            {{
-                              Math.round(
-                                currentRecipe.nutrition.carbohydrates / 2.6
-                              )
-                            }}%
-                          </div>
-                        </div>
-                      </q-knob>
-                    </div>
-                    <div class="row justify-center" style="font-size: 14px">
-                      Kohlenhydrate
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="row justify-center">
-                      <q-knob
-                        :min="0"
-                        :max="70"
-                        :value="currentRecipe.nutrition.fat"
-                        readonly
-                        show-value
-                        size="110px"
-                        :thickness="0.1"
-                        color="teal"
-                        track-color="grey-3"
-                        font-size="16px"
-                      >
-                        <div>
-                          <div class="row justify-center">
-                            {{ currentRecipe.nutrition.fat }}g
-                          </div>
-                          <div class="row justify-center">
-                            {{ Math.round(currentRecipe.nutrition.fat / 0.7) }}%
-                          </div>
-                        </div>
-                      </q-knob>
-                    </div>
-                    <div class="row justify-center" style="font-size: 14px">
-                      Fett
-                    </div>
-                  </div>
-                  <div class="col">
-                    <div class="row justify-center">
-                      <q-knob
-                        :min="0"
-                        :max="50"
-                        :value="currentRecipe.nutrition.protein"
-                        readonly
-                        show-value
-                        size="110px"
-                        :thickness="0.1"
-                        color="teal"
-                        track-color="grey-3"
-                        font-size="16px"
-                      >
-                        <div>
-                          <div class="row justify-center">
-                            {{ currentRecipe.nutrition.protein }}g
-                          </div>
-                          <div class="row justify-center">
-                            {{
-                              Math.round(currentRecipe.nutrition.protein / 0.5)
-                            }}%
-                          </div>
-                        </div>
-                      </q-knob>
-                    </div>
-                    <div class="row justify-center" style="font-size: 14px">
-                      Protein
+                      </div>
+                    </q-knob>
+                    <div class="text-subtitle2">
+                      {{ nutrition.label }}
                     </div>
                   </div>
                 </div>
@@ -321,7 +212,7 @@ export default {
     },
     filteredDirections() {
       return this.currentRecipe.directions.filter(
-        d =>
+        (d) =>
           !d.startsWith("Entdecken Sie auch") &&
           !d.startsWith("Tolle Rezepte") &&
           !d.startsWith("Tipp") &&
@@ -331,9 +222,9 @@ export default {
           !d.startsWith("Lecker") &&
           !d.includes("Entdecken Sie")
       );
-    }
+    },
   },
-  mounted: function() {
+  mounted: function () {
     if (this.recipe) {
       this.currentRecipe = this.recipe;
       this.servingSize = this.recipe.defaultServingSize;
@@ -357,7 +248,7 @@ export default {
         default:
           return name;
       }
-    }
+    },
   },
   methods: {
     decrementServingSize() {
@@ -374,10 +265,10 @@ export default {
       this.$axios
         .get("/recipe/seo", {
           params: {
-            seoTitle: this.recipeSeoTitle
-          }
+            seoTitle: this.recipeSeoTitle,
+          },
         })
-        .then(response => {
+        .then((response) => {
           this.currentRecipe = response.data;
           this.servingSize = response.data.defaultServingSize;
         })
@@ -386,7 +277,7 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem"
+            icon: "report_problem",
           });
         })
         .then(() => {
@@ -395,7 +286,7 @@ export default {
         });
 
       this.mounted = true;
-    }
+    },
   },
   data() {
     return {
@@ -404,9 +295,28 @@ export default {
       currentRecipe: null,
       api: process.env.API,
       loaded: false,
-      servingSize: 0
+      servingSize: 0,
+      nutritions: [
+        { prop: "kj", unit: "kj", label: "Energie", factor: 84, max: 8400 },
+        {
+          prop: "kcal",
+          unit: "kcal",
+          label: "Kalorien",
+          factor: 20,
+          max: 2000,
+        },
+        {
+          prop: "carbohydrates",
+          unit: "g",
+          label: "Kohlenhydrate",
+          factor: 2.6,
+          max: 260,
+        },
+        { prop: "fat", unit: "%", label: "Fett", factor: 0.7, max: 70 },
+        { prop: "protein", unit: "g", label: "Proteine", factor: 0.5, max: 50 },
+      ],
     };
-  }
+  },
 };
 </script>
 <style lang="sass" scoped>
@@ -474,4 +384,17 @@ export default {
 .resultHeading
   margin-bottom: 10px
   word-break: break-all
+</style>
+<style scoped>
+.emulated-flex-gap {
+  --gap: 15px;
+  display: inline-flex;
+  flex-wrap: wrap;
+  margin: calc(-1 * var(--gap)) 0 0 calc(-1 * var(--gap));
+  width: calc(100% + var(--gap));
+}
+
+.emulated-flex-gap > * {
+  margin: var(--gap) 0 0 var(--gap);
+}
 </style>

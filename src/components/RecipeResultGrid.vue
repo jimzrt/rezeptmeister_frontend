@@ -37,7 +37,7 @@
           />
         </q-intersection>
         <div v-for="i in currentPlaceholders" :key="i + '_ph'">
-          <q-card style="width: 400px; height: 785px">
+          <q-card style="max-width: 400px; height: 785px">
             <q-item style="height: 54px">
               <q-item-section>
                 <q-item-label>
@@ -275,9 +275,6 @@ export default {
 }
 </style>
 <style lang="sass">
-.my-card
-  width: 400px
-  transition: all 0.5s
 .clipped
   overflow: hidden
 .active
