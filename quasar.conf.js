@@ -73,6 +73,16 @@ module.exports = function(ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/api': {
+          target: 'https://rezeptmeister.tk',
+          changeOrigin: true,
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        }
+      },
       https: false,
       port: 8081,
       open: true // opens browser window automatically

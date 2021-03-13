@@ -65,8 +65,8 @@
             </q-card-section>
 
             <q-card-section v-if="loaded" class="fade-card">
-              <div style="margin-bottom:15px;">
-                <div class="text-h4 text-left" style="margin-bottom:15px">
+              <div style="margin-bottom: 15px">
+                <div class="text-h4 text-left" style="margin-bottom: 15px">
                   Zutaten für
                   <q-btn
                     round
@@ -84,7 +84,7 @@
                   Portionen
                 </div>
 
-                <div class="row  emulated-flex-gap">
+                <div class="row emulated-flex-gap">
                   <q-markup-table
                     v-for="(
                       ingredientGroup, index

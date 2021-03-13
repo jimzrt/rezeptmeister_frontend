@@ -12,13 +12,16 @@
         </div>
       </q-img>
 
-      <q-card-section>
-        <div class="row no-wrap items-center">
-          <div class="text-h6 my-font col ellipsis">
+      <q-card-section @click="openRecipe()">
+        <div class="row justify-around no-wrap">
+          <div
+            class="text-h6 my-font flex items-center"
+            style="height: 60px; word-wrap: anywhere"
+          >
             {{ recipe.title }}
           </div>
           <div
-            class="col-auto text-grey text-caption q-pt-md column no-wrap items-center"
+            class="text-grey text-caption column items-center justify-center"
           >
             <!-- <q-icon name="place" /> -->
             <div>{{ recipe.calories }} kcal</div>
@@ -30,25 +33,18 @@
         <!-- <div class="text-subtitle2">by Edeka</div> -->
       </q-card-section>
       <q-separator />
-      <q-card-section horizontal>
-        <q-card-section
-          class="text-body2"
-          style="
-              align-items: center;
-              display: flex;
-              text-align: center;
-              text-align: justify;
-            "
-        >
+      <q-card-section horizontal @click="openRecipe()">
+        <div class="text-body2 q-pa-md" style="align-items: center">
           {{ recipe.description }}
-        </q-card-section>
-
-        <q-separator style="flex-shrink: 0" vertical />
-
-        <q-card-section
-          class="col-4 text-caption shadowy"
+        </div>
+      </q-card-section>
+      <q-separator horizontal />
+      <q-card-section horizontal>
+        <div
+          class="q-pa-md"
           style="text-align: center"
-          v-bind:style="expanded ? '' : 'height:177px;overflow:hidden'"
+          :class="expanded ? '' : 'shadowy'"
+          :style="expanded ? '' : 'max-height:100px;overflow:hidden'"
         >
           <q-chip
             dense
@@ -63,13 +59,15 @@
           >
             {{ tag.name }}
           </q-chip>
-        </q-card-section>
+        </div>
       </q-card-section>
       <q-separator />
       <q-card-section horizontal>
-        <q-card-section
-          class="text-body2 shadowy"
-          :style="expanded ? '' : 'height: 90px;overflow: hidden;'"
+        <div
+          class="q-pa-md"
+          style="text-align: center"
+          :class="expanded ? '' : 'shadowy'"
+          :style="expanded ? '' : 'max-height: 100px;overflow: hidden;'"
         >
           <q-chip
             dense
@@ -80,10 +78,11 @@
             @click="addToSearch('ingredient', ingredient)"
             color="primary"
             text-color="white"
+            style="height: auto"
           >
             {{ ingredient.name }}
           </q-chip>
-        </q-card-section>
+        </div>
       </q-card-section>
     </q-card>
     <q-btn
@@ -95,7 +94,7 @@
   </div>
 </template>
 <script>
-const delay = ms => new Promise(res => setTimeout(res, ms));
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 export default {
   name: "RecipeCard",
@@ -130,7 +129,7 @@ export default {
         default:
           return name;
       }
-    }
+    },
   },
   methods: {
     async openRecipe() {
@@ -144,13 +143,13 @@ export default {
         params: {
           recipeSeoTitle: this.recipe.seoTitle,
           recipe: this.recipe,
-          index: this.index
-        }
+          index: this.index,
+        },
       });
     },
     addToSearch(type, value) {
       this.$emit("onAddToSearch", type, value);
-    }
+    },
   },
   data() {
     return {
@@ -159,15 +158,19 @@ export default {
       isShowing: false,
       loading: false,
       api: process.env.API,
-      expanded: false
+      expanded: false,
     };
   },
   activated() {
     this.isShowing = false;
-  }
+  },
 };
 </script>
 <style>
+.q-chip__content {
+  white-space: normal;
+}
+
 .bk {
   transition: all 0.2s ease-in;
 }
@@ -203,8 +206,11 @@ export default {
 <style lang="sass">
 .my-card
   transition: all 0.5s
+  border-radius: 24px 24px 0px 0px
 .clipped
   overflow: hidden
 .active
   z-index: 1
+.expand-button
+  border-radius: 0px 0px 24px 24px
 </style>

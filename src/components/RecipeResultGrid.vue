@@ -19,7 +19,7 @@
     </q-banner>
     <div>
       <div
-        class="q-pa-l row items-center flex-center q-gutter-xl"
+        class="q-pa-l row items-center flex-center q-gutter-x-xl"
         style="margin-bottom: 30px; padding-top: 40px"
         v-if="currentRecipes.length > 0"
       >
@@ -34,29 +34,10 @@
             :recipe="recipe"
             :index="index"
             @onAddToSearch="addToSearch"
+            style="max-width: 400px"
+            class="q-mt-md"
           />
         </q-intersection>
-        <div v-for="i in currentPlaceholders" :key="i + '_ph'">
-          <q-card style="max-width: 400px; height: 785px">
-            <q-item style="height: 54px">
-              <q-item-section>
-                <q-item-label>
-                  <q-skeleton type="text" style="width: 150px" />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-skeleton height="346px" square />
-
-            <q-card-actions style="height: 88px">
-              <q-skeleton type="text" style="width: 150px" />
-              <q-space />
-              <q-skeleton type="QBtn" />
-            </q-card-actions>
-            <q-separator />
-            <q-skeleton type="text" v-for="i in 10" :key="i + '_sk'" />
-          </q-card>
-        </div>
       </div>
 
       <div
@@ -100,7 +81,7 @@ export default {
     },
     flatFilter() {
       return this.flatten(this.value);
-    }
+    },
   },
   filters: {
     backendPictureUrl(recipe) {
@@ -123,7 +104,7 @@ export default {
         default:
           return name;
       }
-    }
+    },
   },
   activated() {
     this.intersectionDisabled = false;
@@ -146,8 +127,8 @@ export default {
         params: {
           recipeSeoTitle: recipe.seoTitle,
           recipe: recipe,
-          index: index
-        }
+          index: index,
+        },
       });
     },
     addToSearch(type, value) {
@@ -155,10 +136,10 @@ export default {
     },
     styleIngredients(ingredients) {
       return ingredients
-        .map(i => {
+        .map((i) => {
           if (
             this.value["ingredient"] &&
-            this.value["ingredient"].some(element => element.id === i.id)
+            this.value["ingredient"].some((element) => element.id === i.id)
           ) {
             return "<span class='text-weight-bold'>" + i.name + "</span>";
           }
@@ -189,10 +170,9 @@ export default {
       //filter ids
       this.loading = true;
       window.scrollTo(0, 0);
-      this.currentPlaceholders = 0;
       await this.$nextTick();
       this.$q.loading.show({
-        delay: 0 // ms
+        delay: 0, // ms
       });
 
       let searchFilter = this.flatFilter;
@@ -203,11 +183,10 @@ export default {
       this.currentRecipes = [];
       this.loadPromise = this.$axios
         .post("/recipe/search", searchFilter)
-        .then(async response => {
+        .then(async (response) => {
           this.totalElements = response.data.totalElements;
           this.totalPages = response.data.totalPages;
           //Todo make better yo
-          //this.currentPlaceholders = response.data.content.length;
           this.currentRecipes = Object.freeze(response.data.content);
         })
         .catch(() => {
@@ -215,15 +194,14 @@ export default {
             color: "negative",
             position: "top",
             message: "Loading failed",
-            icon: "report_problem"
+            icon: "report_problem",
           });
         })
         .then(() => {
           this.$q.loading.hide();
           this.loading = false;
-          this.currentPlaceholders = 0;
         });
-    }
+    },
   },
   data() {
     return {
@@ -232,7 +210,6 @@ export default {
       api: process.env.API,
       dataCopy: {},
       currentRecipes: [],
-      currentPlaceholders: 0,
       currentPage: 1,
       resultCount: 12,
       totalElements: 0,
@@ -240,13 +217,13 @@ export default {
       expandedCards: [],
       resultsPerPageOptions: [12, 24, 36, 48, 96, 192],
       // cancelToken: {},
-      loadPromise: null
+      loadPromise: null,
     };
   },
 
   watch: {
     "$props.value": {
-      handler: function(val, oldVal) {
+      handler: function (val, oldVal) {
         if (this.searchFilterEmpty) {
           this.currentRecipes = [];
           this.currentPage = 1;
@@ -255,9 +232,9 @@ export default {
         this.currentPage = 1;
         this.loadData();
       },
-      deep: true
-    }
-  }
+      deep: true,
+    },
+  },
 };
 </script>
 <style scoped>
